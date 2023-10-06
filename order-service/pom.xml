@@ -6,7 +6,6 @@
 	<artifactId>order-service</artifactId>
 	<name>order-service</name>
 	<packaging>jar</packaging>
-	<description>liga food service</description>
 
 	<parent>
 		<artifactId>dependency_bom</artifactId>
@@ -27,7 +26,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<version>${spring.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
