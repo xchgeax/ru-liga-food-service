@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-    <include file="changelog/v01.xml" relativeToChangelogFile="true"/>
-    <include file="changelog/v02.xml" relativeToChangelogFile="true"/>
+    <changeSet id="2023-10-15 10:00:00" author="laetansky">
+        <sqlFile path="v02/testdata.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
 </databaseChangeLog>
