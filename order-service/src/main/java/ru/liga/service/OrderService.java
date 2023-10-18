@@ -3,13 +3,11 @@ package ru.liga.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.liga.dto.OrderConfirmationDto;
-import ru.liga.dto.OrderDto;
-import ru.liga.dto.OrderedItemDto;
-import ru.liga.dto.RestaurantDto;
-import ru.liga.entity.Order;
-import ru.liga.entity.OrderStatus;
+import ru.liga.dto.*;
+import ru.liga.entity.*;
+import ru.liga.repo.OrderItemRepository;
 import ru.liga.repo.OrderRepository;
+import ru.liga.repo.RestaurantMenuItemRepository;
 
 import java.util.List;
 
@@ -18,10 +16,16 @@ import java.util.List;
 public class OrderService {
 
     OrderRepository orderRepository;
+    OrderItemRepository orderItemRepository;
+    RestaurantMenuItemRepository restaurantMenuItemRepository;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository,
+                        OrderItemRepository orderItemRepository,
+                        RestaurantMenuItemRepository restaurantMenuItemRepository) {
         this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
+        this.restaurantMenuItemRepository = restaurantMenuItemRepository;
     }
 
     public OrderDto getOrderById(Long id) {
@@ -43,7 +47,34 @@ public class OrderService {
         return List.of(new OrderDto());
     }
 
-    public OrderConfirmationDto createOrder(Long restaurantId, List<OrderedItemDto> menuItems) {
+    public OrderConfirmationDto createOrder(Long restaurantId, List<OrderItemDto> menuItems) {
         return new OrderConfirmationDto().setId(0L).setArrivalTime(123L).setPaymentUrl("google.com");
+    }
+
+    public OrderItemConfirmationDto saveNewOrderItem(Long orderId, Long menuItemId, int quantity) {
+
+        OrderItemConfirmationDto orderItemConfirmationDto = new OrderItemConfirmationDto();
+        RestaurantMenuItem restaurantMenuItem = restaurantMenuItemRepository.findRestaurantMenuItemById(menuItemId);
+        Order order = orderRepository.findOrderById(orderId);
+
+        if (restaurantMenuItem == null || order == null) return orderItemConfirmationDto.setId(-1L);
+
+        OrderItem orderItem = OrderItem.builder()
+                .order(order)
+                .restaurantMenuItem(restaurantMenuItem)
+                .quantity(quantity)
+                .price(restaurantMenuItem.getPrice() * quantity)
+                .build();
+        orderItemRepository.save(orderItem);
+
+        return orderItemConfirmationDto.setId(orderItem.getId());
+    }
+
+    public void deleteOrderItem(Long id) {
+        OrderItem orderItem = orderItemRepository.findOrderItemById(id);
+
+        if (orderItem == null) return;
+
+        orderItemRepository.delete(orderItem);
     }
 }

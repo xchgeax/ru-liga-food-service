@@ -18,5 +18,5 @@ public class OrderCreationDto {
 
     @Schema(description = "Ordered items")
     @JsonProperty("menu_items")
-    private List<OrderedItemDto> menuItems;
+    private List<OrderItemDto> menuItems;
 }

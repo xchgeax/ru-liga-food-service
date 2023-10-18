@@ -5,9 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.liga.dto.OrderConfirmationDto;
-import ru.liga.dto.OrderCreationDto;
-import ru.liga.dto.OrderDto;
+import ru.liga.dto.*;
 import ru.liga.entity.OrderStatus;
 import ru.liga.service.OrderService;
 
@@ -16,14 +14,14 @@ import java.util.List;
 @Tag(name = "Orders management API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/orders")
+@RequestMapping
 public class OrderController {
 
     private final OrderService orderService;
 
     // TODO: return page
     @Operation(summary = "Get all orders")
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<OrderDto>> getOrderList() {
        return ResponseEntity.ok(orderService.getOrderList());
     }
@@ -44,6 +42,19 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderConfirmationDto> createOrder(@RequestBody OrderCreationDto order) {
         return ResponseEntity.ok(orderService.createOrder(order.getRestaurantId(), order.getMenuItems()));
+    }
+
+    @Operation(summary = "Create new order item")
+    @PostMapping("/{id}/items")
+    public ResponseEntity<OrderItemConfirmationDto> saveNewOrderItem(@PathVariable("id") Long id,
+                                                                     @RequestBody OrderItemDto orderItemDto) {
+        return ResponseEntity.ok(orderService.saveNewOrderItem(id, orderItemDto.getMenuItemId(), orderItemDto.getQuantity()));
+    }
+
+    @Operation(summary = "Delete order item")
+    @PostMapping("/item/delete/{id}")
+    public void deleteOrderItem(@PathVariable("id") Long id) {
+        orderService.deleteOrderItem(id);
     }
 
 }
