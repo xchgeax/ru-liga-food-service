@@ -1,13 +1,16 @@
 package ru.liga.entity;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "orders")
 public class Order {
@@ -31,4 +34,7 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "courier_id")
     private Courier courier;
+    @OneToMany
+    @JoinColumn(name = "order_id")
+    private List<OrderItem> orderItemList;
 }
