@@ -5,11 +5,11 @@ import dto.ItemDto;
 import dto.OrderDto;
 import dto.RestaurantDto;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.liga.dto.*;
 import ru.liga.entity.*;
+import ru.liga.exception.ResourceNotFoundException;
 import ru.liga.repo.OrderItemRepository;
 import ru.liga.repo.OrderRepository;
 import ru.liga.repo.RestaurantMenuItemRepository;
@@ -81,13 +81,23 @@ public class OrderService {
         return new OrderConfirmationDto().setId(0L).setArrivalTime(123L).setPaymentUrl("google.com");
     }
 
-    public OrderItemConfirmationDto saveNewOrderItem(Long orderId, Long menuItemId, Integer quantity) {
+    public void updateOrderStatus(Long id, OrderStatus status) throws ResourceNotFoundException {
+        Order order = orderRepository.findOrderById(id);
+
+        if (order == null) throw new ResourceNotFoundException("Order not found");
+
+        order.setStatus(status);
+        orderRepository.save(order);
+    }
+
+    public OrderItemConfirmationDto saveNewOrderItem(Long orderId, Long menuItemId, Integer quantity) throws ResourceNotFoundException {
 
         OrderItemConfirmationDto orderItemConfirmationDto = new OrderItemConfirmationDto();
         RestaurantMenuItem restaurantMenuItem = restaurantMenuItemRepository.findRestaurantMenuItemById(menuItemId);
         Order order = orderRepository.findOrderById(orderId);
 
-        if (restaurantMenuItem == null || order == null) return orderItemConfirmationDto.setId(-1L);
+        if (restaurantMenuItem == null) throw new ResourceNotFoundException("Menu item not found");
+        if (order == null) throw new ResourceNotFoundException("Order not found");
 
         OrderItem orderItem = OrderItem.builder()
                 .order(order)
@@ -100,10 +110,10 @@ public class OrderService {
         return orderItemConfirmationDto.setId(orderItem.getId());
     }
 
-    public void deleteOrderItem(Long id) {
+    public void deleteOrderItem(Long id) throws ResourceNotFoundException {
         OrderItem orderItem = orderItemRepository.findOrderItemById(id);
 
-        if (orderItem == null) return;
+        if (orderItem == null) throw new ResourceNotFoundException("Order item not found");
 
         orderItemRepository.delete(orderItem);
     }

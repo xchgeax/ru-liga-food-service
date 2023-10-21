@@ -15,7 +15,7 @@ public interface OrderRepository extends CrudRepository<Order, Long> {
     @Modifying
     @Transactional
     @Query("update Order ord set ord.status = :status where ord.id = :id")
-    void updateOrderStatus(@Param("id") Long id, @Param("status") String status);
+    void updateOrderStatus(@Param("id") Long id, @Param("status") OrderStatus status);
 
     @Transactional
     @Query("select ord from Order ord where ord.status = :status")
