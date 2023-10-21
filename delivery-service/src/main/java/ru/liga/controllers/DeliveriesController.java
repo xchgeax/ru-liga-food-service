@@ -20,11 +20,6 @@ public class DeliveriesController {
 
     private final DeliveryService deliveryService;
 
-    // TODO: return page
-
-    /**
-     * @param status - active/complete delivery status
-     */
     @Operation(summary = "Get delivery list by status")
     @GetMapping("/status")
     public ResponseEntity<List<DeliveryDto>> getDeliveryListByStatus(@RequestParam OrderStatus status) {
