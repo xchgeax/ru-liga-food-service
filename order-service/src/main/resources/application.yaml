@@ -11,3 +11,23 @@ management:
   endpoint:
     health:
       show-details: ALWAYS
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        format_sql: 'true'
+      org:
+        hibernate:
+          envers:
+            revision_field_name: rev_id
+            revision_type_field_name: rev_type
+    show-sql: 'true'
+  datasource:
+    password: 'admin'
+    url: jdbc:postgresql://localhost:5432/postgres
+
+    username: 'postgres'
