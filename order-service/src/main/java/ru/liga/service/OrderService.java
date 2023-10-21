@@ -74,7 +74,7 @@ public class OrderService {
     }
 
     public List<OrderDto> getOrderList() {
-        return List.of(new OrderDto());
+        return orderRepository.getOrders().stream().map(this::mapOrderToDto).collect(Collectors.toList());
     }
 
     public OrderConfirmationDto createOrder(Long restaurantId, List<OrderItemDto> menuItems) {
