@@ -20,5 +20,5 @@ public class SaveMenuItemDto {
     private String image;
 
     @Schema(description = "Price of a new menu item")
-    private int price;
+    private Long price;
 }

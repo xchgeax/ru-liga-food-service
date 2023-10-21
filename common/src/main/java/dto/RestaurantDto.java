@@ -1,4 +1,4 @@
-package ru.liga.dto;
+package dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -14,4 +14,7 @@ public class RestaurantDto {
 
     @Schema(description = "Restaurant address")
     private String address;
+
+    @Schema(description = "Restaurant distance")
+    private Long distance;
 }

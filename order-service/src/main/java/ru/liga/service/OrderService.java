@@ -1,6 +1,11 @@
 package ru.liga.service;
 
+import dto.CustomerDto;
+import dto.ItemDto;
+import dto.OrderDto;
+import dto.RestaurantDto;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.liga.dto.*;
@@ -10,6 +15,7 @@ import ru.liga.repo.OrderRepository;
 import ru.liga.repo.RestaurantMenuItemRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,17 +36,41 @@ public class OrderService {
 
     public OrderDto getOrderById(Long id) {
         Order order = orderRepository.findOrderById(id);
-        RestaurantDto restaurantDto = new RestaurantDto()
-                .setName(order.getRestaurant().getName())
-                .setAddress(order.getRestaurant().getAddress());
-        return new OrderDto()
-                .setId(order.getId())
-                .setRestaurant(restaurantDto)
-                .setTimestamp(order.getTimestamp());
+        return mapOrderToDto(order);
     }
 
     public List<OrderDto> getOrderListByStatus(OrderStatus status) {
-        return List.of(new OrderDto());
+        List<Order> orderList = orderRepository.findOrderByStatus(status);
+        return orderList.stream().map(this::mapOrderToDto).collect(Collectors.toList());
+    }
+
+    // TODO: временно, нужны мапперы
+    private OrderDto mapOrderToDto(Order order) {
+        RestaurantDto restaurantDto = new RestaurantDto()
+                .setName(order.getRestaurant().getName())
+                .setAddress(order.getRestaurant().getAddress());
+        CustomerDto customerDto = new CustomerDto()
+                .setAddress(order.getCustomer().getAddress())
+                .setPhone(order.getCustomer().getPhone());
+        List<ItemDto> itemList = order.getOrderItemList().stream()
+                .map(this::mapOrderItemToDto).collect(Collectors.toList());
+
+        return new OrderDto()
+                .setId(order.getId())
+                .setRestaurant(restaurantDto)
+                .setCustomer(customerDto)
+                .setItems(itemList)
+                .setTimestamp(order.getTimestamp());
+    }
+
+    private ItemDto mapOrderItemToDto(OrderItem item) {
+        RestaurantMenuItem restaurantMenuItem = item.getRestaurantMenuItem();
+
+        return new ItemDto()
+                .setDescription(restaurantMenuItem.getDescription())
+                .setImage(restaurantMenuItem.getImage())
+                .setPrice(item.getPrice())
+                .setQuantity(item.getQuantity());
     }
 
     public List<OrderDto> getOrderList() {
@@ -51,7 +81,7 @@ public class OrderService {
         return new OrderConfirmationDto().setId(0L).setArrivalTime(123L).setPaymentUrl("google.com");
     }
 
-    public OrderItemConfirmationDto saveNewOrderItem(Long orderId, Long menuItemId, int quantity) {
+    public OrderItemConfirmationDto saveNewOrderItem(Long orderId, Long menuItemId, Integer quantity) {
 
         OrderItemConfirmationDto orderItemConfirmationDto = new OrderItemConfirmationDto();
         RestaurantMenuItem restaurantMenuItem = restaurantMenuItemRepository.findRestaurantMenuItemById(menuItemId);

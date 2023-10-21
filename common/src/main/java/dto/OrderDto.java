@@ -1,4 +1,4 @@
-package ru.liga.dto;
+package dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -17,6 +17,9 @@ public class OrderDto {
 
     @Schema(description = "Restaurant order was made at")
     private RestaurantDto restaurant;
+
+    @Schema(description = "Customer order was made by")
+    private CustomerDto customer;
 
     @Schema(description = "Time order was made at")
     private Date timestamp;

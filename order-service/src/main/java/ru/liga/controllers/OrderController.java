@@ -1,5 +1,6 @@
 package ru.liga.controllers;
 
+import dto.OrderDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

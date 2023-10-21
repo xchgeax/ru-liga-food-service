@@ -1,4 +1,4 @@
-package ru.liga.dto;
+package dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -13,7 +13,7 @@ public class ItemDto {
     private Long price;
 
     @Schema(description = "Item quantity")
-    private Long quantity;
+    private Integer quantity;
 
     @Schema(description = "Item description")
     private String description;

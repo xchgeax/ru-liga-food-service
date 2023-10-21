@@ -17,9 +17,9 @@ public class OrderItem {
     @Column(name = "id", nullable = false)
     private long id;
     @Column(name = "price", nullable = false)
-    private int price;
+    private Long price;
     @Column(name = "quantity", nullable = false)
-    private int quantity;
+    private Integer quantity;
 
     @ManyToOne
     @JoinColumn(name = "order_id")

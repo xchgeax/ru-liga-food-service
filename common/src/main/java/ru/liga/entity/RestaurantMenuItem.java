@@ -17,7 +17,7 @@ public class RestaurantMenuItem {
     @Column(name = "name", nullable = false)
     private String name;
     @Column(name = "price", nullable = false)
-    private int price;
+    private Long price;
     @Column(name = "description", nullable = false)
     private String description;
     @Column(name = "image", nullable = false)

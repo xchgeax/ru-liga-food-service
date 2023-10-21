@@ -21,7 +21,7 @@ public class RestaurantService {
         return new UpdatePriceConfirmationDto().setPrice(price).setId(id);
     }
 
-    public SaveMenuItemConfirmationDto saveMenuItem(String name, int price, String description, String image, Long restaurantId) {
+    public SaveMenuItemConfirmationDto saveMenuItem(String name, Long price, String description, String image, Long restaurantId) {
         Restaurant restaurant = restaurantRepository.findRestaurantById(restaurantId);
 
         if (restaurant == null) return new SaveMenuItemConfirmationDto().setId(-1L);
