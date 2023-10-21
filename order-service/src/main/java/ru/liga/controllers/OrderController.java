@@ -1,13 +1,12 @@
 package ru.liga.controllers;
 
-import dto.OrderDto;
+import ru.liga.dto.OrderDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 import ru.liga.dto.*;
 import ru.liga.entity.OrderStatus;
 import ru.liga.exception.ResourceNotFoundException;
@@ -32,12 +31,12 @@ public class OrderController {
 
     @Operation(summary = "Get order by ID")
     @GetMapping("/{id}")
-    public ResponseEntity<OrderDto> getOrderById(@PathVariable("id") Long id) {
+    public ResponseEntity<OrderDto> getOrderById(@PathVariable("id") Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
     @Operation(summary = "Get orders with specified status")
-    @GetMapping("/{status}")
+    @GetMapping("/status/{status}")
     public ResponseEntity<List<OrderDto>> getOrderListByStatus(@PathVariable OrderStatus status) {
         return ResponseEntity.ok(orderService.getOrderListByStatus(status));
     }
@@ -49,7 +48,7 @@ public class OrderController {
     }
 
     @Operation(summary = "Update order status")
-    @PostMapping("/{id}")
+    @PostMapping("/{id}/status")
     public ResponseEntity<Object> updateOrderStatus(@PathVariable("id") Long id,
                                                     @RequestBody OrderStatusUpdateDto updateDto) throws ResourceNotFoundException {
         orderService.updateOrderStatus(id, updateDto.getStatus());

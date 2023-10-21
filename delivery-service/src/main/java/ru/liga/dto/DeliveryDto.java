@@ -1,8 +1,6 @@
 package ru.liga.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import dto.CustomerDto;
-import dto.RestaurantDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;

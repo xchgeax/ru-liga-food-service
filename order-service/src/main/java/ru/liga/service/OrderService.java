@@ -1,9 +1,9 @@
 package ru.liga.service;
 
-import dto.CustomerDto;
-import dto.ItemDto;
-import dto.OrderDto;
-import dto.RestaurantDto;
+import ru.liga.dto.CustomerDto;
+import ru.liga.dto.ItemDto;
+import ru.liga.dto.OrderDto;
+import ru.liga.dto.RestaurantDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,17 +25,24 @@ public class OrderService {
     OrderItemRepository orderItemRepository;
     RestaurantMenuItemRepository restaurantMenuItemRepository;
 
+    RabbitMQOrderService rabbitMQProducerService;
+
     @Autowired
     public OrderService(OrderRepository orderRepository,
                         OrderItemRepository orderItemRepository,
-                        RestaurantMenuItemRepository restaurantMenuItemRepository) {
+                        RestaurantMenuItemRepository restaurantMenuItemRepository,
+                        RabbitMQOrderService rabbitMQOrderService) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.restaurantMenuItemRepository = restaurantMenuItemRepository;
+        this.rabbitMQProducerService = rabbitMQOrderService;
     }
 
-    public OrderDto getOrderById(Long id) {
+    public OrderDto getOrderById(Long id) throws ResourceNotFoundException {
         Order order = orderRepository.findOrderById(id);
+
+        if (order == null) throw new ResourceNotFoundException("Order not found");
+
         return mapOrderToDto(order);
     }
 
@@ -85,6 +92,9 @@ public class OrderService {
         Order order = orderRepository.findOrderById(id);
 
         if (order == null) throw new ResourceNotFoundException("Order not found");
+
+        if (status == OrderStatus.DELIVERY_PENDING)
+            rabbitMQProducerService.sendOrderToDeliveryService(mapOrderToDto(order));
 
         order.setStatus(status);
         orderRepository.save(order);

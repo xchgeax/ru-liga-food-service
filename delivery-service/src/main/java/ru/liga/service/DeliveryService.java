@@ -1,6 +1,6 @@
 package ru.liga.service;
 
-import dto.OrderDto;
+import ru.liga.dto.OrderDto;
 import org.springframework.stereotype.Service;
 import ru.liga.clients.OrdersFeign;
 import ru.liga.dto.DeliveryDto;
