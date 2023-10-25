@@ -3,9 +3,11 @@ package ru.liga.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.liga.dto.SaveMenuItemConfirmationDto;
+import ru.liga.dto.SaveMenuItemDto;
 import ru.liga.dto.UpdatePriceConfirmationDto;
 import ru.liga.entity.Restaurant;
 import ru.liga.entity.RestaurantMenuItem;
+import ru.liga.exception.ResourceNotFoundException;
 import ru.liga.repo.RestaurantMenuItemRepository;
 import ru.liga.repo.RestaurantRepository;
 
@@ -21,17 +23,17 @@ public class RestaurantService {
         return new UpdatePriceConfirmationDto().setPrice(price).setId(id);
     }
 
-    public SaveMenuItemConfirmationDto saveMenuItem(String name, Long price, String description, String image, Long restaurantId) {
+    public SaveMenuItemConfirmationDto saveMenuItem(Long restaurantId, SaveMenuItemDto menuItemDto) throws ResourceNotFoundException {
         Restaurant restaurant = restaurantRepository.findRestaurantById(restaurantId);
 
-        if (restaurant == null) return new SaveMenuItemConfirmationDto().setId(-1L);
+        if (restaurant == null) throw new ResourceNotFoundException("Restaurant not found");
 
         RestaurantMenuItem restaurantMenuItem = new RestaurantMenuItem();
         restaurantMenuItem.setRestaurant(restaurant);
-        restaurantMenuItem.setName(name);
-        restaurantMenuItem.setPrice(price);
-        restaurantMenuItem.setDescription(description);
-        restaurantMenuItem.setImage(image);
+        restaurantMenuItem.setName(menuItemDto.getName());
+        restaurantMenuItem.setPrice(menuItemDto.getPrice());
+        restaurantMenuItem.setDescription(menuItemDto.getDescription());
+        restaurantMenuItem.setImage(menuItemDto.getImage());
 
         restaurantMenuItem = menuItemRepository.save(restaurantMenuItem);
 
