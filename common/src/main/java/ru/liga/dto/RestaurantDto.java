@@ -15,6 +15,4 @@ public class RestaurantDto {
     @Schema(description = "Restaurant address")
     private String address;
 
-    @Schema(description = "Restaurant distance")
-    private Long distance;
 }

@@ -7,8 +7,9 @@ import ru.liga.entity.Restaurant;
 import ru.liga.entity.RestaurantStatus;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
-public interface RestaurantRepository extends CrudRepository<Restaurant, Long>  {
+public interface RestaurantRepository extends CrudRepository<Restaurant, Long> {
 
     @Transactional
     @Query("select r from Restaurant r where r.id = :id")
@@ -16,5 +17,5 @@ public interface RestaurantRepository extends CrudRepository<Restaurant, Long>  
 
     @Transactional
     @Query("select r from Restaurant r where r.status = :status")
-    Restaurant findRestaurantByStatus(@Param("status") RestaurantStatus status);
+    List<Restaurant> findRestaurantsByStatus(@Param("status") RestaurantStatus status);
 }
