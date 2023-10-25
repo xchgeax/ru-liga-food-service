@@ -10,9 +10,12 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class OrderItemDto {
 
-    @Schema(description = "Item price")
+    @Schema(description = "Restaurant menu item")
     @JsonProperty("menu_item_id")
     private Long menuItemId;
+
+    @Schema(description = "Total price of an order")
+    private Long price;
 
     @Schema(description = "Item quantity")
     private Integer quantity;

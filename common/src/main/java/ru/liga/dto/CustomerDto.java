@@ -17,6 +17,4 @@ public class CustomerDto {
     @Schema(description = "Customer phone number")
     private String phone;
 
-    @Schema(description = "Customer distance")
-    private Long distance;
 }

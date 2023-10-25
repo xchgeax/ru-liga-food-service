@@ -25,5 +25,5 @@ public class OrderDto {
     private Date timestamp;
 
     @Schema(description = "Ordered items")
-    private List<ItemDto> items;
+    private List<OrderItemDto> items;
 }

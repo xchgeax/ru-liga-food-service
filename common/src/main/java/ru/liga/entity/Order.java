@@ -17,7 +17,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private long id;
+    private Long id;
 
     @Column(name = "timestamp")
     @Temporal(TemporalType.TIMESTAMP)
@@ -36,5 +36,5 @@ public class Order {
     private Courier courier;
     @OneToMany
     @JoinColumn(name = "order_id")
-    private List<OrderItem> orderItemList;
+    private List<OrderItem> items;
 }
