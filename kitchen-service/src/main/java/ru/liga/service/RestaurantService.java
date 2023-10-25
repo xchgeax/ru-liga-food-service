@@ -41,10 +41,6 @@ public class RestaurantService {
     }
 
     public void deleteMenuItem(Long id) {
-        RestaurantMenuItem menuItem = menuItemRepository.findRestaurantMenuItemById(id);
-
-        if (menuItem == null) return;
-
-        menuItemRepository.delete(menuItem);
+        menuItemRepository.deleteById(id);
     }
 }

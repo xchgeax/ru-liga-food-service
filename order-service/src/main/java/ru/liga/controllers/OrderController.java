@@ -65,7 +65,7 @@ public class OrderController {
 
     @Operation(summary = "Delete order item")
     @PostMapping("/item/delete/{id}")
-    public void deleteOrderItem(@PathVariable("id") Long id) throws ResourceNotFoundException {
+    public void deleteOrderItem(@PathVariable("id") Long id) {
         orderService.deleteOrderItem(id);
     }
 

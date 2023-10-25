@@ -120,11 +120,7 @@ public class OrderService {
         return orderItemConfirmationDto.setId(orderItem.getId());
     }
 
-    public void deleteOrderItem(Long id) throws ResourceNotFoundException {
-        OrderItem orderItem = orderItemRepository.findOrderItemById(id);
-
-        if (orderItem == null) throw new ResourceNotFoundException("Order item not found");
-
-        orderItemRepository.delete(orderItem);
+    public void deleteOrderItem(Long id) {
+        orderItemRepository.deleteById(id);
     }
 }
