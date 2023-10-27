@@ -15,6 +15,7 @@ import ru.liga.repo.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class OrderService {
     private final RestaurantRepository restaurantRepository;
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
+    private final RestaurantMenuItemRepository menuItemRepository;
     private final RabbitMQOrderService rabbitMQProducerService;
     private final OrderMapper orderMapper;
     private final RestaurantMenuItemMapper restaurantMenuItemMapper;
@@ -80,24 +82,27 @@ public class OrderService {
 
     private List<OrderItem> validateAndGetOrderedItems(Order order, Long restaurantId, List<OrderItemCreationDto> orderItemDtoList) throws NoOrderItemsSuppliedException {
 
-        List<RestaurantMenuItemDto> restaurantMenuItemsDtoList = restaurantsFeign.getMenuItemsByRestaurantId(restaurantId);
-        List<OrderItem> orderedItems = new ArrayList<>(Collections.emptyList());
+        Map<Long, Integer> orderedMenuItemQuantity = orderItemDtoList.stream()
+                .collect(Collectors.toMap(OrderItemCreationDto::getMenuItemId, OrderItemCreationDto::getQuantity));
 
-        orderItemDtoList.forEach(orderItemDto -> restaurantMenuItemsDtoList.stream()
-                .filter(index -> index.getId().equals(orderItemDto.getMenuItemId()))
-                .findFirst()
-                .ifPresent(restaurantMenuItemDto ->
-                {
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setOrder(order);
-                    orderItem.setRestaurantMenuItem(restaurantMenuItemMapper.restaurantMenuItemDtoToItem(restaurantMenuItemDto));
-                    orderItem.setQuantity(orderItemDto.getQuantity());
-                    orderItem.setPrice(restaurantMenuItemDto.getPrice() * orderItemDto.getQuantity());
+        Set<Long> orderedMenuItemIds = orderedMenuItemQuantity.keySet();
+        List<RestaurantMenuItem> menuItems = menuItemRepository.findAllByRestaurantIdAndIdIn(restaurantId, orderedMenuItemIds);
 
-                    orderedItems.add(orderItem);
-                }));
+        if (menuItems.isEmpty()) throw new NoOrderItemsSuppliedException();
 
-        if (orderedItems.isEmpty()) throw new NoOrderItemsSuppliedException();
+        List<OrderItem> orderedItems = new ArrayList<>();
+
+        menuItems.forEach(menuItem -> {
+            Integer quantity = orderedMenuItemQuantity.get(menuItem.getId());
+
+            OrderItem orderItem = new OrderItem();
+            orderItem.setOrder(order);
+            orderItem.setRestaurantMenuItem(menuItem);
+            orderItem.setQuantity(quantity);
+            orderItem.setPrice(menuItem.getPrice() * quantity);
+
+            orderedItems.add(orderItem);
+        });
 
         return orderedItems;
     }

@@ -8,6 +8,7 @@ import ru.liga.entity.RestaurantMenuItem;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 
 public interface RestaurantMenuItemRepository extends CrudRepository<RestaurantMenuItem, Long> {
 
@@ -23,4 +24,7 @@ public interface RestaurantMenuItemRepository extends CrudRepository<RestaurantM
     @Modifying
     @Query("update RestaurantMenuItem item set item.price = :price where item.id = :id")
     void updatePrice(@Param(value = "id") long id, @Param(value = "price") int price);
+
+    @Transactional
+    List<RestaurantMenuItem> findAllByRestaurantIdAndIdIn(Long restaurantId, Set<Long> id);
 }
