@@ -109,7 +109,7 @@ public class OrderService {
         Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
         if (status == OrderStatus.DELIVERY_PENDING)
-            rabbitMQProducerService.sendOrderToDeliveryService(orderMapper.orderToOrderDto(order));
+            rabbitMQProducerService.sendOrderToDeliveryService(id);
 
         order.setStatus(status);
         orderRepository.save(order);

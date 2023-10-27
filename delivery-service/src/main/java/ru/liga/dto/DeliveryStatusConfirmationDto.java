@@ -3,6 +3,7 @@ package ru.liga.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import ru.liga.entity.OrderStatus;
 
 @Schema(description = "Confirmation for an updated status of specified delivery")
 @Data
@@ -13,5 +14,5 @@ public class DeliveryStatusConfirmationDto {
     private Long id;
 
     @Schema(description = "Delivery status")
-    private String status;
+    private OrderStatus status;
 }

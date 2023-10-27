@@ -1,9 +1,9 @@
 package ru.liga.repo;
 
-import org.apache.ibatis.annotations.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import ru.liga.entity.Order;
 import ru.liga.entity.OrderStatus;
 

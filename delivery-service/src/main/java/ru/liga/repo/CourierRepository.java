@@ -7,6 +7,7 @@ import ru.liga.entity.Courier;
 import ru.liga.entity.CourierStatus;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 public interface CourierRepository extends CrudRepository<Courier, Long> {
 
@@ -16,5 +17,5 @@ public interface CourierRepository extends CrudRepository<Courier, Long> {
 
     @Transactional
     @Query("select c from Courier c where c.status = :status")
-    Courier findCourierByStatus(@Param("status") CourierStatus status);
+    List<Courier> findCourierByStatus(@Param("status") CourierStatus status);
 }
