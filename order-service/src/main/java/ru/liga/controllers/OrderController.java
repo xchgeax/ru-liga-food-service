@@ -1,5 +1,6 @@
 package ru.liga.controllers;
 
+import org.springframework.data.domain.Page;
 import ru.liga.dto.OrderDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,6 +15,8 @@ import ru.liga.exception.ResourceNotFoundException;
 import ru.liga.service.OrderItemService;
 import ru.liga.service.OrderService;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Tag(name = "Orders management API")
@@ -28,8 +31,9 @@ public class OrderController {
     // TODO: return page
     @Operation(summary = "Get all orders")
     @GetMapping
-    public ResponseEntity<List<OrderDto>> getOrderList() {
-        return ResponseEntity.ok(orderService.getOrderList());
+    public ResponseEntity<Page<OrderDto>> getOrderList(@PositiveOrZero @RequestParam Integer pageIndex,
+                                                       @Positive @RequestParam Integer pageCount) {
+        return ResponseEntity.ok(orderService.getOrderList(pageIndex, pageCount));
     }
 
     @Operation(summary = "Get order by ID")

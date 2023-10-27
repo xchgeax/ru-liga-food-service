@@ -1,5 +1,8 @@
 package ru.liga.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import ru.liga.dto.OrderDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,10 +43,11 @@ public class OrderService {
         return orderMapper.orderToOrderDto(orderList);
     }
 
-    public List<OrderDto> getOrderList() {
-        List<Order> orders = orderRepository.findAll();
+    public Page<OrderDto> getOrderList(Integer pageIndex, Integer pageCount) {
+        Pageable page = PageRequest.of(pageIndex, pageCount);
+        Page<Order> orders = orderRepository.findAll(page);
 
-        return orderMapper.orderToOrderDto(orders);
+        return orders.map(orderMapper::orderToOrderDto);
     }
 
     public OrderConfirmationDto createOrder(Long restaurantId, List<OrderItemCreationDto> orderItemDtoList) throws ResourceNotFoundException, NoOrderItemsSuppliedException {
