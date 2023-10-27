@@ -11,6 +11,7 @@ import ru.liga.dto.*;
 import ru.liga.entity.OrderStatus;
 import ru.liga.exception.NoOrderItemsSuppliedException;
 import ru.liga.exception.ResourceNotFoundException;
+import ru.liga.service.OrderItemService;
 import ru.liga.service.OrderService;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final OrderItemService orderItemService;
 
     // TODO: return page
     @Operation(summary = "Get all orders")
@@ -60,14 +62,14 @@ public class OrderController {
     @PostMapping("/{id}/items")
     public ResponseEntity<OrderItemConfirmationDto> saveNewOrderItem(@PathVariable("id") Long id,
                                                                      @RequestBody OrderItemDto orderItemDto) throws ResourceNotFoundException {
-        return ResponseEntity.ok(orderService.saveNewOrderItem(id, orderItemDto.getMenuItemId(),
+        return ResponseEntity.ok(orderItemService.saveNewOrderItem(id, orderItemDto.getMenuItemId(),
                 orderItemDto.getQuantity()));
     }
 
     @Operation(summary = "Delete order item")
     @PostMapping("/item/delete/{id}")
     public void deleteOrderItem(@PathVariable("id") Long id) {
-        orderService.deleteOrderItem(id);
+        orderItemService.deleteOrderItem(id);
     }
 
     @ExceptionHandler(value = ResourceNotFoundException.class)
