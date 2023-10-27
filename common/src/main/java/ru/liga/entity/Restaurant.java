@@ -15,7 +15,7 @@ public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private long id;
+    private Long id;
     @Enumerated(EnumType.STRING)
     private RestaurantStatus status;
     @Column(name = "address", nullable = false)

@@ -1,8 +1,8 @@
 package ru.liga.repo;
 
-import org.apache.ibatis.annotations.Param;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import ru.liga.entity.Customer;
 
 import javax.transaction.Transactional;

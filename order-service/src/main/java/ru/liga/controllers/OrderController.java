@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.liga.dto.*;
 import ru.liga.entity.OrderStatus;
+import ru.liga.exception.NoOrderItemsSuppliedException;
 import ru.liga.exception.ResourceNotFoundException;
 import ru.liga.service.OrderService;
 
@@ -43,7 +44,7 @@ public class OrderController {
 
     @Operation(summary = "Create new order")
     @PostMapping
-    public ResponseEntity<OrderConfirmationDto> createOrder(@RequestBody OrderCreationDto order) {
+    public ResponseEntity<OrderConfirmationDto> createOrder(@RequestBody OrderCreationDto order) throws ResourceNotFoundException, NoOrderItemsSuppliedException {
         return ResponseEntity.ok(orderService.createOrder(order.getRestaurantId(), order.getMenuItems()));
     }
 
@@ -71,7 +72,11 @@ public class OrderController {
 
     @ExceptionHandler(value = ResourceNotFoundException.class)
     protected ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
+    @ExceptionHandler(value = NoOrderItemsSuppliedException.class)
+    protected ResponseEntity<Object> handleNoOrderItemsSuppliedException(NoOrderItemsSuppliedException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }

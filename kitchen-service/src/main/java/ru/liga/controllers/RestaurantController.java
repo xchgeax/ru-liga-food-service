@@ -13,11 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.liga.dto.RestaurantDto;
-import ru.liga.dto.SaveMenuItemConfirmationDto;
-import ru.liga.dto.SaveMenuItemDto;
-import ru.liga.dto.UpdatePriceConfirmationDto;
-import ru.liga.dto.UpdatePriceDto;
+import ru.liga.dto.*;
 import ru.liga.entity.RestaurantStatus;
 import ru.liga.exception.ResourceNotFoundException;
 import ru.liga.service.RestaurantService;
@@ -36,6 +32,12 @@ public class RestaurantController {
     @GetMapping("/status/{status}")
     public ResponseEntity<List<RestaurantDto>> findRestaurantsByStatus(@PathVariable("status") RestaurantStatus status) {
         return ResponseEntity.ok(restaurantService.findRestaurantsByStatus(status));
+    }
+
+    @Operation(summary = "Find restaurant menu items by restaurant id")
+    @GetMapping("/{id}/items")
+    public ResponseEntity<List<RestaurantMenuItemDto>> getMenuItemsByRestaurantId(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(restaurantService.findMenuItemsByRestaurantId(id));
     }
 
     @Operation(summary = "Update restaurant item price")

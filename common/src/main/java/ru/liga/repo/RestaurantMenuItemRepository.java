@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import ru.liga.entity.RestaurantMenuItem;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 public interface RestaurantMenuItemRepository extends CrudRepository<RestaurantMenuItem, Long> {
 
@@ -15,8 +16,8 @@ public interface RestaurantMenuItemRepository extends CrudRepository<RestaurantM
     RestaurantMenuItem findRestaurantMenuItemById(@Param("id") Long id);
 
     @Transactional
-    @Query("select item from RestaurantMenuItem item where item.restaurant = :id")
-    RestaurantMenuItem findRestaurantMenuItemByRestaurantId(@Param("id") Long id);
+    @Query("select item from RestaurantMenuItem item where item.restaurant.id = :id")
+    List<RestaurantMenuItem> findRestaurantMenuItemsByRestaurantId(@Param("id") Long id);
 
     @Transactional
     @Modifying
