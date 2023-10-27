@@ -1,6 +1,5 @@
 package ru.liga.service;
 
-import ru.liga.clients.RestaurantsFeign;
 import ru.liga.dto.OrderDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,7 +8,6 @@ import ru.liga.entity.*;
 import ru.liga.exception.NoOrderItemsSuppliedException;
 import ru.liga.exception.ResourceNotFoundException;
 import ru.liga.mapper.OrderMapper;
-import ru.liga.mapper.RestaurantMenuItemMapper;
 import ru.liga.repo.*;
 
 import java.sql.Timestamp;
@@ -28,14 +26,10 @@ public class OrderService {
     private final RestaurantMenuItemRepository menuItemRepository;
     private final RabbitMQOrderService rabbitMQProducerService;
     private final OrderMapper orderMapper;
-    private final RestaurantMenuItemMapper restaurantMenuItemMapper;
-    private final RestaurantsFeign restaurantsFeign;
 
 
     public OrderDto getOrderById(Long id) throws ResourceNotFoundException {
-        Order order = orderRepository.findOrderById(id);
-
-        if (order == null) throw new ResourceNotFoundException("Order not found");
+        Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
         return orderMapper.orderToOrderDto(order);
     }
@@ -47,7 +41,7 @@ public class OrderService {
     }
 
     public List<OrderDto> getOrderList() {
-        List<Order> orders = orderRepository.getOrders();
+        List<Order> orders = orderRepository.findAll();
 
         return orderMapper.orderToOrderDto(orders);
     }
@@ -108,9 +102,7 @@ public class OrderService {
     }
 
     public void updateOrderStatus(Long id, OrderStatus status) throws ResourceNotFoundException {
-        Order order = orderRepository.findOrderById(id);
-
-        if (order == null) throw new ResourceNotFoundException("Order not found");
+        Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
         if (status == OrderStatus.DELIVERY_PENDING)
             rabbitMQProducerService.sendOrderToDeliveryService(orderMapper.orderToOrderDto(order));

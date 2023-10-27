@@ -22,11 +22,9 @@ public class OrderItemService {
     private final RestaurantMenuItemRepository restaurantMenuItemRepository;
 
     public OrderItemConfirmationDto saveNewOrderItem(Long orderId, Long menuItemId, Integer quantity) throws ResourceNotFoundException {
-        Order order = orderRepository.findOrderById(orderId);
-        RestaurantMenuItem restaurantMenuItem = restaurantMenuItemRepository.findRestaurantMenuItemById(menuItemId);
-
-        if (restaurantMenuItem == null) throw new ResourceNotFoundException("Menu item not found");
-        if (order == null) throw new ResourceNotFoundException("Order not found");
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+        RestaurantMenuItem restaurantMenuItem = restaurantMenuItemRepository.findById(menuItemId)
+                .orElseThrow(() -> new ResourceNotFoundException("Menu item not found"));
 
         OrderItem orderItem = OrderItem.builder()
                 .order(order)
