@@ -2,7 +2,6 @@ package ru.liga.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.data.domain.Page;
 import ru.liga.dto.CustomerDto;
 import ru.liga.dto.OrderDto;
 import ru.liga.dto.OrderItemDto;

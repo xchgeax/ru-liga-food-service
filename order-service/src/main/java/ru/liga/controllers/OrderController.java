@@ -28,7 +28,6 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderItemService orderItemService;
 
-    // TODO: return page
     @Operation(summary = "Get all orders")
     @GetMapping
     public ResponseEntity<Page<OrderDto>> getOrderList(@PositiveOrZero @RequestParam Integer pageIndex,
