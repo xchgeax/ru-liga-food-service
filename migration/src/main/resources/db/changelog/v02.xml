@@ -5,6 +5,9 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <changeSet id="2023-10-15 10:00:00" author="laetansky">
         <sqlFile path="v02/testdata.sql" relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="v02/rollback/v02_rollback.sql" relativeToChangelogFile="true"/>
+        </rollback>
     </changeSet>
 
 </databaseChangeLog>
