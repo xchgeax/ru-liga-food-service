@@ -20,8 +20,4 @@ public interface OrderMapper {
 
     List<OrderDto> orderToOrderDto(List<Order> order);
 
-    CustomerDto customerToCustomerDto(Customer customer);
-
-    @Mapping(source = "item.restaurantMenuItem.id", target = "menuItemId")
-    OrderItemDto orderItemToOrderItemDto(OrderItem item);
 }
