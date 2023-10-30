@@ -45,8 +45,4 @@ public class MenuItemController {
         return ResponseEntity.ok(restaurantService.saveMenuItem(menuItemDto));
     }
 
-    @ExceptionHandler(value = ResourceNotFoundException.class)
-    protected ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    }
 }

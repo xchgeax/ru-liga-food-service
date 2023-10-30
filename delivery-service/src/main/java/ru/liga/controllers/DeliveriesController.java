@@ -41,8 +41,4 @@ public class DeliveriesController {
         return ResponseEntity.ok(deliveryService.updateDeliveryStatus(id, statusDto.getStatus()));
     }
 
-    @ExceptionHandler(value = ResourceNotFoundException.class)
-    protected ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-    }
 }

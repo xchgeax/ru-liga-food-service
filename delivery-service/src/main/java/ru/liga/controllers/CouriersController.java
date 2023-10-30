@@ -51,8 +51,4 @@ public class CouriersController {
         return ResponseEntity.ok().body(courierService.updateCourierStatus(courierId, updateDto.getStatus()));
     }
 
-    @ExceptionHandler(value = ResourceNotFoundException.class)
-    protected ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-    }
 }
