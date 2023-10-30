@@ -6,7 +6,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.liga.dto.*;
-import ru.liga.entity.Courier;
 import ru.liga.entity.Restaurant;
 import ru.liga.entity.RestaurantMenuItem;
 import ru.liga.entity.RestaurantStatus;
@@ -54,12 +53,8 @@ public class RestaurantService {
         Restaurant restaurant = restaurantRepository.findById(menuItemDto.getRestaurantId()).orElseThrow(
                 () -> new ResourceNotFoundException("Restaurant does not exist"));
 
-        RestaurantMenuItem restaurantMenuItem = new RestaurantMenuItem();
-        restaurantMenuItem.setRestaurant(restaurant);
-        restaurantMenuItem.setName(menuItemDto.getName());
-        restaurantMenuItem.setPrice(menuItemDto.getPrice());
-        restaurantMenuItem.setDescription(menuItemDto.getDescription());
-        restaurantMenuItem.setImage(menuItemDto.getImage());
+        RestaurantMenuItem restaurantMenuItem = restaurantMenuItemMapper.saveMenuItemDtoToRestaurantMenuItem(restaurant,
+                menuItemDto);
 
         restaurantMenuItem = menuItemRepository.save(restaurantMenuItem);
 

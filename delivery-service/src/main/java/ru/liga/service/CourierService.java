@@ -6,10 +6,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.liga.dto.CourierStatusConfirmationDto;
-import ru.liga.dto.CourierUpdateStatusDto;
 import ru.liga.entity.Courier;
 import ru.liga.entity.CourierStatus;
 import ru.liga.exception.ResourceNotFoundException;
+import ru.liga.mapper.CourierStatusConfirmationMapper;
 import ru.liga.repo.CourierRepository;
 
 import java.util.List;
@@ -20,6 +20,7 @@ import java.util.List;
 public class CourierService {
 
     private final CourierRepository courierRepository;
+    private final CourierStatusConfirmationMapper courierStatusConfirmationMapper;
 
     public Page<Courier> getCourierList(Integer pageIndex, Integer pageCount) {
         Pageable page = PageRequest.of(pageIndex, pageCount);
@@ -33,12 +34,7 @@ public class CourierService {
         courier.setStatus(courierStatus);
         courierRepository.save(courier);
 
-        CourierStatusConfirmationDto confirmationDto = new CourierStatusConfirmationDto();
-
-        confirmationDto.setId(courierId);
-        confirmationDto.setStatus(courierStatus);
-
-        return confirmationDto;
+        return courierStatusConfirmationMapper.toCourierStatusConfirmationDto(courierId, courierStatus);
     }
 
     public Courier getCourierById(Long id) throws ResourceNotFoundException {
