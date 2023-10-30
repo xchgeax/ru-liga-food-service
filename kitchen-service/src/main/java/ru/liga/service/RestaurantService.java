@@ -1,8 +1,12 @@
 package ru.liga.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.liga.dto.*;
+import ru.liga.entity.Courier;
 import ru.liga.entity.Restaurant;
 import ru.liga.entity.RestaurantMenuItem;
 import ru.liga.entity.RestaurantStatus;
@@ -23,6 +27,12 @@ public class RestaurantService {
     private final RestaurantMapper restaurantMapper;
     private final RestaurantMenuItemMapper restaurantMenuItemMapper;
 
+    public Page<Restaurant> getRestaurantList(Integer pageIndex, Integer pageCount) {
+        Pageable page = PageRequest.of(pageIndex, pageCount);
+
+        return restaurantRepository.findAll(page);
+    }
+
     public List<RestaurantDto> findRestaurantsByStatus(RestaurantStatus status) {
         List<Restaurant> restaurantList = restaurantRepository.findRestaurantsByStatus(status);
 
@@ -41,9 +51,8 @@ public class RestaurantService {
     }
 
     public SaveMenuItemConfirmationDto saveMenuItem(SaveMenuItemDto menuItemDto) throws ResourceNotFoundException {
-        Restaurant restaurant = restaurantRepository.findRestaurantById(menuItemDto.getRestaurantId());
-
-        if (restaurant == null) throw new ResourceNotFoundException("Restaurant not found");
+        Restaurant restaurant = restaurantRepository.findById(menuItemDto.getRestaurantId()).orElseThrow(
+                () -> new ResourceNotFoundException("Restaurant does not exist"));
 
         RestaurantMenuItem restaurantMenuItem = new RestaurantMenuItem();
         restaurantMenuItem.setRestaurant(restaurant);

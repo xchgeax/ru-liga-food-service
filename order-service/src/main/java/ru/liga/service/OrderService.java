@@ -51,9 +51,7 @@ public class OrderService {
     }
 
     public OrderConfirmationDto createOrder(Long restaurantId, List<OrderItemCreationDto> orderItemDtoList) throws ResourceNotFoundException, NoOrderItemsSuppliedException {
-        Restaurant restaurant = restaurantRepository.findRestaurantById(restaurantId);
-
-        if (restaurant == null) throw new ResourceNotFoundException("Restaurant does not exist");
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new ResourceNotFoundException("Restaurant does not exist"));
 
         // TODO: get real customer with security
         Customer customer = customerRepository.findCustomerById(1L);

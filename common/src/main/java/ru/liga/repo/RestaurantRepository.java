@@ -1,5 +1,6 @@
 package ru.liga.repo;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -9,11 +10,7 @@ import ru.liga.entity.RestaurantStatus;
 import javax.transaction.Transactional;
 import java.util.List;
 
-public interface RestaurantRepository extends CrudRepository<Restaurant, Long> {
-
-    @Transactional
-    @Query("select r from Restaurant r where r.id = :id")
-    Restaurant findRestaurantById(@Param("id") Long id);
+public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
     @Transactional
     @Query("select r from Restaurant r where r.status = :status")
