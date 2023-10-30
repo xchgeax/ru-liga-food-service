@@ -10,6 +10,9 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class SaveMenuItemDto {
 
+    @Schema(description = "Restaurant id new item belongs to")
+    private Long restaurantId;
+
     @Schema(description = "Name of a new menu item")
     private String name;
 

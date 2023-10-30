@@ -34,34 +34,4 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantService.findRestaurantsByStatus(status));
     }
 
-    @Operation(summary = "Find restaurant menu items by restaurant id")
-    @GetMapping("/{id}/items")
-    public ResponseEntity<List<RestaurantMenuItemDto>> getMenuItemsByRestaurantId(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(restaurantService.findMenuItemsByRestaurantId(id));
-    }
-
-    @Operation(summary = "Update restaurant item price")
-    @PatchMapping("/item/{id}")
-    public ResponseEntity<UpdatePriceConfirmationDto> updateMenuItemPrice(@PathVariable("id") Long id,
-                                                                          @RequestBody UpdatePriceDto statusDto) {
-        return ResponseEntity.ok(restaurantService.updatePrice(id, statusDto.getPrice()));
-    }
-
-    @Operation(summary = "Create new menu item")
-    @PostMapping("/{id}/menu/create")
-    public ResponseEntity<SaveMenuItemConfirmationDto> createMenuItem(@PathVariable("id") Long id,
-                                                                      @RequestBody SaveMenuItemDto menuItemDto) throws ResourceNotFoundException {
-        return ResponseEntity.ok(restaurantService.saveMenuItem(id, menuItemDto));
-    }
-
-    @Operation(summary = "Delete menu item")
-    @PostMapping("/item/delete/{id}")
-    public void deleteMenuItem(@PathVariable("id") Long id) {
-        restaurantService.deleteMenuItem(id);
-    }
-
-    @ExceptionHandler(value = ResourceNotFoundException.class)
-    protected ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    }
 }

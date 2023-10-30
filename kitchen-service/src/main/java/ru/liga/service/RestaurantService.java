@@ -40,8 +40,8 @@ public class RestaurantService {
        return restaurantMenuItemMapper.restaurantMenuItemToDto(restaurantMenuItems);
     }
 
-    public SaveMenuItemConfirmationDto saveMenuItem(Long restaurantId, SaveMenuItemDto menuItemDto) throws ResourceNotFoundException {
-        Restaurant restaurant = restaurantRepository.findRestaurantById(restaurantId);
+    public SaveMenuItemConfirmationDto saveMenuItem(SaveMenuItemDto menuItemDto) throws ResourceNotFoundException {
+        Restaurant restaurant = restaurantRepository.findRestaurantById(menuItemDto.getRestaurantId());
 
         if (restaurant == null) throw new ResourceNotFoundException("Restaurant not found");
 
