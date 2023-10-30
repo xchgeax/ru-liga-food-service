@@ -23,7 +23,7 @@ import java.util.List;
 @Tag(name = "Restaurant management API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping
+@RequestMapping("/restaurant")
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
