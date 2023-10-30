@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.liga.dto.UpdateStatusDto;
+import ru.liga.dto.DeliveryUpdateStatusDto;
 import ru.liga.dto.DeliveryDto;
 import ru.liga.dto.DeliveryStatusConfirmationDto;
 import ru.liga.entity.OrderStatus;
@@ -37,7 +37,7 @@ public class DeliveriesController {
     @Operation(summary = "Update delivery status")
     @PostMapping("/status/{id}")
     public ResponseEntity<DeliveryStatusConfirmationDto> updateDeliveryStatus(@PathVariable("id") Long id,
-                                                                              @RequestBody UpdateStatusDto statusDto) throws ResourceNotFoundException {
+                                                                              @RequestBody DeliveryUpdateStatusDto statusDto) throws ResourceNotFoundException {
         return ResponseEntity.ok(deliveryService.updateDeliveryStatus(id, statusDto.getStatus()));
     }
 

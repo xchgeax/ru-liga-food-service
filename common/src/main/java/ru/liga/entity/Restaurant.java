@@ -13,7 +13,8 @@ import javax.persistence.*;
 @Table(name = "restaurants")
 public class Restaurant {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "restaurants_seq")
+    @SequenceGenerator(name = "restaurants_seq", sequenceName = "restaurants_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Long id;
     @Enumerated(EnumType.STRING)

@@ -9,7 +9,7 @@ import ru.liga.entity.OrderStatus;
 @Schema(description = "DTO for updating delivery status")
 @Data
 @Accessors(chain = true)
-public class UpdateStatusDto {
+public class DeliveryUpdateStatusDto {
 
     @Schema(description = "New delivery order status")
     @JsonProperty("order_action")

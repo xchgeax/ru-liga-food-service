@@ -6,17 +6,16 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
-import ru.liga.dto.OrderDto;
-import ru.liga.entity.Courier;
-import ru.liga.entity.CourierStatus;
-import ru.liga.entity.Order;
-import ru.liga.entity.OrderStatus;
+import ru.liga.entity.*;
 import ru.liga.exception.ResourceNotFoundException;
-import ru.liga.mapper.OrderMapper;
 import ru.liga.repo.CourierRepository;
 import ru.liga.repo.OrderRepository;
+import ru.liga.util.Coordinates;
+import ru.liga.util.CoordinatesCalculator;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -25,7 +24,7 @@ public class QueueListener {
 
     private final CourierRepository courierRepository;
     private final OrderRepository orderRepository;
-    private final OrderMapper orderMapper;
+    private final RabbitMQNotificationServiceImpl rabbitMQNotificationService;
 
     @SneakyThrows
     @RabbitListener(queues = "delivery")
@@ -38,13 +37,20 @@ public class QueueListener {
         List<Courier> courierList = courierRepository.findCourierByStatus(CourierStatus.AVAILABLE);
 
         if (!courierList.isEmpty()) {
-            Courier courier = courierList.get(0);
-            order.setCourier(courier);
-            courier.setStatus(CourierStatus.BUSY);
+            Customer customer = order.getCustomer();
+            Coordinates customerCoordinates = new Coordinates(customer.getCoordinates());
+
+            Courier closestCourier = courierList.stream()
+                    .sorted(Comparator.comparingDouble(courier -> CoordinatesCalculator.distance(
+                            new Coordinates(courier.getCoordinates()), customerCoordinates)))
+                    .collect(Collectors.toList()).get(0);
+
+            closestCourier.setStatus(CourierStatus.BUSY);
+            order.setCourier(closestCourier);
             order.setStatus(OrderStatus.DELIVERY_PICKING);
 
-            courierRepository.save(courier);
             orderRepository.save(order);
+            rabbitMQNotificationService.sendCourierNotificationOnOrder(orderId);
         }
     }
 }

@@ -12,9 +12,10 @@ import javax.persistence.*;
 @Table(name = "Couriers")
 public class Courier {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "couriers_seq")
+    @SequenceGenerator(name = "couriers_seq", sequenceName = "couriers_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
-    private long id;
+    private Long id;
     @Column(name = "phone", nullable = false)
     private String phone;
     @Column(name = "coordinates", nullable = false)

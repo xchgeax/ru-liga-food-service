@@ -11,8 +11,8 @@ import javax.persistence.Column;
 @Accessors(chain = true)
 public class CustomerDto {
 
-    @Schema(description = "Customer address")
-    private String address;
+    @Schema(description = "Customer coordinates")
+    private String coordinates;
 
     @Schema(description = "Customer phone number")
     private String phone;
