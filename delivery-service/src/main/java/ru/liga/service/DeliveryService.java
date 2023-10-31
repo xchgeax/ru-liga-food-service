@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.liga.clients.OrdersFeign;
 import ru.liga.dto.DeliveryDto;
-import ru.liga.dto.DeliveryStatusConfirmationDto;
 import ru.liga.dto.OrderDto;
 import ru.liga.entity.Order;
 import ru.liga.entity.OrderStatus;
@@ -34,18 +33,4 @@ public class DeliveryService {
         return deliveryMapper.orderDtoToDeliveryDto(orders);
     }
 
-    public DeliveryStatusConfirmationDto updateDeliveryStatus(Long id, OrderStatus status) throws ResourceNotFoundException{
-
-        Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Delivery not found"));
-
-        order.setStatus(status);
-        orderRepository.save(order);
-
-        DeliveryStatusConfirmationDto statusConfirmationDto = new DeliveryStatusConfirmationDto();
-
-        statusConfirmationDto.setId(id);
-        statusConfirmationDto.setStatus(status);
-
-        return statusConfirmationDto;
-    }
 }

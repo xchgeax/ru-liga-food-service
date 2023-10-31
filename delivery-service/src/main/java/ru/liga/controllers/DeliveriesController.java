@@ -3,12 +3,12 @@ package ru.liga.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import ru.liga.dto.DeliveryUpdateStatusDto;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.liga.dto.DeliveryDto;
-import ru.liga.dto.DeliveryStatusConfirmationDto;
 import ru.liga.entity.OrderStatus;
 import ru.liga.exception.ResourceNotFoundException;
 import ru.liga.service.DeliveryService;
@@ -32,13 +32,6 @@ public class DeliveriesController {
     @GetMapping("/{id}")
     public ResponseEntity<DeliveryDto> getDeliveryById(@PathVariable("id") Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(deliveryService.getDeliveryById(id));
-    }
-
-    @Operation(summary = "Update delivery status")
-    @PostMapping("/status/{id}")
-    public ResponseEntity<DeliveryStatusConfirmationDto> updateDeliveryStatus(@PathVariable("id") Long id,
-                                                                              @RequestBody DeliveryUpdateStatusDto statusDto) throws ResourceNotFoundException {
-        return ResponseEntity.ok(deliveryService.updateDeliveryStatus(id, statusDto.getStatus()));
     }
 
 }
