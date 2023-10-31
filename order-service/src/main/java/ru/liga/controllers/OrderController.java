@@ -55,10 +55,9 @@ public class OrderController {
 
     @Operation(summary = "Update order status")
     @PostMapping("/{id}/status")
-    public ResponseEntity<Object> updateOrderStatus(@PathVariable("id") Long id,
+    public void updateOrderStatus(@PathVariable("id") Long id,
                                                     @RequestBody OrderStatusUpdateDto updateDto) throws ResourceNotFoundException {
         orderService.updateOrderStatus(id, updateDto.getStatus());
-        return ResponseEntity.ok().body(updateDto);
     }
 
     @Operation(summary = "Create new order item")

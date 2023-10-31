@@ -1,5 +1,6 @@
 package ru.liga.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -26,9 +27,8 @@ public class QueueListener {
     private final OrderRepository orderRepository;
     private final RabbitMQNotificationServiceImpl rabbitMQNotificationService;
 
-    @SneakyThrows
     @RabbitListener(queues = "delivery")
-    public void processDeliveryQueue(String message) {
+    public void processDeliveryQueue(String message) throws JsonProcessingException, ResourceNotFoundException {
         ObjectMapper objectMapper = new ObjectMapper();
 
         Long orderId = objectMapper.readValue(message, Long.class);
@@ -49,8 +49,12 @@ public class QueueListener {
             order.setCourier(closestCourier);
             order.setStatus(OrderStatus.DELIVERY_PICKING);
 
-            orderRepository.save(order);
+
             rabbitMQNotificationService.sendCourierNotificationOnOrder(orderId);
+        } else {
+            order.setStatus(OrderStatus.DELIVERY_PENDING);
         }
+
+        orderRepository.save(order);
     }
 }

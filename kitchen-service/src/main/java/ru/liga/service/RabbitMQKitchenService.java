@@ -1,6 +1,6 @@
 package ru.liga.service;
 
-public interface RabbitMQOrderService {
+public interface RabbitMQKitchenService {
 
     void sendOrderToDeliveryService(Long orderId);
 

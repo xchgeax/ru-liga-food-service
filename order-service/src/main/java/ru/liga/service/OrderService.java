@@ -29,7 +29,6 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
 
-    private final RabbitMQOrderService rabbitMQProducerService;
     private final OrderMapper orderMapper;
 
 
@@ -81,9 +80,6 @@ public class OrderService {
 
     public void updateOrderStatus(Long id, OrderStatus status) throws ResourceNotFoundException {
         Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-
-        if (status == OrderStatus.DELIVERY_PENDING)
-            rabbitMQProducerService.sendOrderToDeliveryService(id);
 
         order.setStatus(status);
         orderRepository.save(order);

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class RabbitMQOrderServiceImpl implements RabbitMQOrderService {
+public class RabbitMQKitchenServiceImpl implements RabbitMQKitchenService {
 
     private final RabbitTemplate rabbitTemplate;
 
