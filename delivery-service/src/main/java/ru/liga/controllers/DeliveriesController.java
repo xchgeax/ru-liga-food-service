@@ -20,6 +20,7 @@ import java.util.List;
 @Tag(name = "Deliveries management API")
 @RestController
 @Slf4j
+@RequestMapping("/delivery")
 @RequiredArgsConstructor
 public class DeliveriesController {
 
@@ -40,7 +41,7 @@ public class DeliveriesController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Order was not found")
     })
-    @GetMapping("/{orderId}")
+    @GetMapping("/id/{orderId}")
     public ResponseEntity<DeliveryDto> getDeliveryById(@PathVariable("orderId") Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(deliveryService.getDeliveryById(id));
     }
