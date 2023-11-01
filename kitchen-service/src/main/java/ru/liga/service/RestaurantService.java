@@ -5,14 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.liga.dto.*;
+import ru.liga.dto.RestaurantCreationDto;
+import ru.liga.dto.RestaurantDto;
 import ru.liga.entity.Restaurant;
-import ru.liga.entity.RestaurantMenuItem;
 import ru.liga.entity.RestaurantStatus;
 import ru.liga.exception.ResourceNotFoundException;
 import ru.liga.mapper.RestaurantMapper;
-import ru.liga.mapper.RestaurantMenuItemMapper;
-import ru.liga.repo.RestaurantMenuItemRepository;
 import ru.liga.repo.RestaurantRepository;
 
 import java.util.List;
@@ -21,10 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RestaurantService {
 
-    private final RestaurantMenuItemRepository menuItemRepository;
     private final RestaurantRepository restaurantRepository;
     private final RestaurantMapper restaurantMapper;
-    private final RestaurantMenuItemMapper restaurantMenuItemMapper;
 
     public Page<Restaurant> getRestaurantList(Integer pageIndex, Integer pageCount) {
         Pageable page = PageRequest.of(pageIndex, pageCount);
@@ -58,32 +54,5 @@ public class RestaurantService {
 
         restaurant.setStatus(status);
         restaurantRepository.save(restaurant);
-    }
-
-    public UpdatePriceConfirmationDto updatePrice(Long id, int price) {
-        menuItemRepository.updatePrice(id, price);
-        return new UpdatePriceConfirmationDto().setPrice(price).setId(id);
-    }
-
-    public List<RestaurantMenuItemDto> findMenuItemsByRestaurantId(Long restaurantId) {
-        List<RestaurantMenuItem> restaurantMenuItems = menuItemRepository.findRestaurantMenuItemsByRestaurantId(restaurantId);
-
-       return restaurantMenuItemMapper.restaurantMenuItemToDto(restaurantMenuItems);
-    }
-
-    public SaveMenuItemConfirmationDto saveMenuItem(SaveMenuItemDto menuItemDto) throws ResourceNotFoundException {
-        Restaurant restaurant = restaurantRepository.findById(menuItemDto.getRestaurantId()).orElseThrow(
-                () -> new ResourceNotFoundException("Restaurant does not exist"));
-
-        RestaurantMenuItem restaurantMenuItem = restaurantMenuItemMapper.saveMenuItemDtoToRestaurantMenuItem(restaurant,
-                menuItemDto);
-
-        restaurantMenuItem = menuItemRepository.save(restaurantMenuItem);
-
-        return new SaveMenuItemConfirmationDto().setId(restaurantMenuItem.getId());
-    }
-
-    public void deleteMenuItem(Long id) {
-        menuItemRepository.deleteById(id);
     }
 }
