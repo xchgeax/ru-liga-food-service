@@ -21,10 +21,5 @@ public interface RestaurantMenuItemRepository extends CrudRepository<RestaurantM
     List<RestaurantMenuItem> findRestaurantMenuItemsByRestaurantId(@Param("id") Long id);
 
     @Transactional
-    @Modifying
-    @Query("update RestaurantMenuItem item set item.price = :price where item.id = :id")
-    void updatePrice(@Param(value = "id") long id, @Param(value = "price") int price);
-
-    @Transactional
     List<RestaurantMenuItem> findAllByRestaurantIdAndIdIn(Long restaurantId, Set<Long> id);
 }

@@ -10,5 +10,5 @@ import lombok.experimental.Accessors;
 public class UpdatePriceDto {
 
     @Schema(description = "New price")
-    private int price;
+    private Long price;
 }

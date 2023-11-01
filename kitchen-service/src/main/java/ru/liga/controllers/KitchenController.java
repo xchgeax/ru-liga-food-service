@@ -1,5 +1,6 @@
 package ru.liga.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,6 +22,7 @@ public class KitchenController {
 
     private final KitchenService kitchenService;
 
+    @Operation(summary = "Accept order by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Order was not found")
@@ -31,6 +33,7 @@ public class KitchenController {
         kitchenService.acceptOrder(orderId);
     }
 
+    @Operation(summary = "Deny order by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Order was not found")
@@ -41,6 +44,7 @@ public class KitchenController {
         kitchenService.denyOrder(orderId);
     }
 
+    @Operation(summary = "Finish order and pass it to delivery")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Order was not found")

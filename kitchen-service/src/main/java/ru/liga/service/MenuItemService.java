@@ -22,9 +22,14 @@ public class MenuItemService {
     private final RestaurantMenuItemRepository menuItemRepository;
     private final RestaurantMenuItemMapper restaurantMenuItemMapper;
 
-    public UpdatePriceConfirmationDto updatePrice(Long id, int price) {
-        menuItemRepository.updatePrice(id, price);
-        return new UpdatePriceConfirmationDto().setPrice(price).setId(id);
+    public RestaurantMenuItemDto updatePrice(Long id, Long price) throws ResourceNotFoundException {
+        RestaurantMenuItem restaurantMenuItem = menuItemRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Menu item does not exist"));
+
+        restaurantMenuItem.setPrice(price);
+        menuItemRepository.save(restaurantMenuItem);
+
+        return restaurantMenuItemMapper.restaurantMenuItemToDto(restaurantMenuItem);
     }
 
     public List<RestaurantMenuItemDto> findMenuItemsByRestaurantId(Long restaurantId) {
