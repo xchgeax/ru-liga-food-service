@@ -5,7 +5,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.liga.dto.*;
+import ru.liga.dto.RestaurantMenuItemDto;
+import ru.liga.dto.SaveMenuItemDto;
+import ru.liga.dto.UpdatePriceConfirmationDto;
+import ru.liga.dto.UpdatePriceDto;
 import ru.liga.exception.ResourceNotFoundException;
 import ru.liga.service.MenuItemService;
 
@@ -28,7 +31,7 @@ public class MenuItemController {
     @Operation(summary = "Update restaurant item price by id")
     @PatchMapping("/{id}/price")
     public ResponseEntity<UpdatePriceConfirmationDto> updateMenuItemPriceById(@PathVariable("id") Long id,
-                                                                          @RequestBody UpdatePriceDto statusDto) {
+                                                                              @RequestBody UpdatePriceDto statusDto) {
         return ResponseEntity.ok(menuItemService.updatePrice(id, statusDto.getPrice()));
     }
 
@@ -40,7 +43,8 @@ public class MenuItemController {
 
     @Operation(summary = "Create new menu item for restaurant by id")
     @PostMapping("/create")
-    public ResponseEntity<SaveMenuItemConfirmationDto> createMenuItem(@RequestBody SaveMenuItemDto menuItemDto) throws ResourceNotFoundException {
+    public ResponseEntity<RestaurantMenuItemDto> createMenuItem(@RequestBody SaveMenuItemDto menuItemDto)
+            throws ResourceNotFoundException {
         return ResponseEntity.ok(menuItemService.saveMenuItem(menuItemDto));
     }
 

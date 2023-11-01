@@ -3,7 +3,6 @@ package ru.liga.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.liga.dto.RestaurantMenuItemDto;
-import ru.liga.dto.SaveMenuItemConfirmationDto;
 import ru.liga.dto.SaveMenuItemDto;
 import ru.liga.dto.UpdatePriceConfirmationDto;
 import ru.liga.entity.Restaurant;
@@ -34,7 +33,7 @@ public class MenuItemService {
         return restaurantMenuItemMapper.restaurantMenuItemToDto(restaurantMenuItems);
     }
 
-    public SaveMenuItemConfirmationDto saveMenuItem(SaveMenuItemDto menuItemDto) throws ResourceNotFoundException {
+    public RestaurantMenuItemDto saveMenuItem(SaveMenuItemDto menuItemDto) throws ResourceNotFoundException {
         Restaurant restaurant = restaurantRepository.findById(menuItemDto.getRestaurantId()).orElseThrow(
                 () -> new ResourceNotFoundException("Restaurant does not exist"));
 
@@ -43,7 +42,7 @@ public class MenuItemService {
 
         restaurantMenuItem = menuItemRepository.save(restaurantMenuItem);
 
-        return new SaveMenuItemConfirmationDto().setId(restaurantMenuItem.getId());
+        return restaurantMenuItemMapper.restaurantMenuItemToDto(restaurantMenuItem);
     }
 
     public void deleteMenuItem(Long id) {
