@@ -1,6 +1,8 @@
 package ru.liga.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,8 +30,9 @@ public class DeliveriesController {
 
     @Operation(summary = "Get delivery list by status")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(
+                            schema = @Schema(implementation = DeliveryDto.class)))
     })
     @GetMapping("/status")
     public ResponseEntity<List<DeliveryDto>> getDeliveryListByStatus(@RequestParam OrderStatus status) {
@@ -38,7 +41,9 @@ public class DeliveriesController {
 
     @Operation(summary = "Get delivery by id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(
+                            schema = @Schema(implementation = DeliveryDto.class))),
             @ApiResponse(responseCode = "404", description = "Order was not found")
     })
     @GetMapping("/id/{orderId}")

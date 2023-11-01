@@ -9,6 +9,9 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class RestaurantDto {
 
+    @Schema(description = "Restaurant id")
+    private Long id;
+
     @Schema(description = "Restaurant name")
     private String name;
 

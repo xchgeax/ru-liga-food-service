@@ -32,10 +32,32 @@ public class RestaurantService {
         return restaurantRepository.findAll(page);
     }
 
+    public RestaurantDto getRestaurantById(Long id) throws ResourceNotFoundException {
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Restaurant does not exist"));
+
+        return restaurantMapper.restaurantToRestaurantDto(restaurant);
+    }
+
+    public RestaurantDto createRestaurant(RestaurantCreationDto restaurantCreationDto) {
+        Restaurant restaurant = restaurantMapper.restaurantCreationDtoToRestaurant(restaurantCreationDto);
+
+        restaurantRepository.save(restaurant);
+        return restaurantMapper.restaurantToRestaurantDto(restaurant);
+    }
+
     public List<RestaurantDto> findRestaurantsByStatus(RestaurantStatus status) {
         List<Restaurant> restaurantList = restaurantRepository.findRestaurantsByStatus(status);
 
         return restaurantMapper.restaurantsToRestaurantDtos(restaurantList);
+    }
+
+    public void updateRestaurantStatus(Long id, RestaurantStatus status) throws ResourceNotFoundException {
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Restaurant does not exist"));
+
+        restaurant.setStatus(status);
+        restaurantRepository.save(restaurant);
     }
 
     public UpdatePriceConfirmationDto updatePrice(Long id, int price) {
