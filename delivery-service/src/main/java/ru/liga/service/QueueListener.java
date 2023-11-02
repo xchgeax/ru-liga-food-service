@@ -32,6 +32,7 @@ public class QueueListener {
         ObjectMapper objectMapper = new ObjectMapper();
 
         Long orderId = objectMapper.readValue(message, Long.class);
+        log.info("Received new delivery to process id={}", orderId);
         Order order = orderRepository.findById(orderId).orElseThrow(ResourceNotFoundException::new);
 
         List<Courier> courierList = courierRepository.findCourierByStatus(CourierStatus.AVAILABLE);
@@ -48,10 +49,11 @@ public class QueueListener {
             closestCourier.setStatus(CourierStatus.BUSY);
             order.setCourier(closestCourier);
             order.setStatus(OrderStatus.DELIVERY_PICKING);
-
+            log.info("Order id={} is not awaiting courier", orderId);
 
             rabbitMQNotificationService.sendCourierNotificationOnOrder(orderId);
         } else {
+            log.info("No available courier for order id={}, pending", orderId);
             order.setStatus(OrderStatus.DELIVERY_PENDING);
         }
 
