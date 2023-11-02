@@ -1,7 +1,7 @@
 server:
   port: 8081
   servlet:
-    context-path: /restaurant
+    context-path: /kitchen
 
 management:
   endpoints:

@@ -22,7 +22,7 @@ import java.util.List;
 @Tag(name = "Orders management API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping
+@RequestMapping("/order")
 public class OrderController {
 
     private final OrderService orderService;
