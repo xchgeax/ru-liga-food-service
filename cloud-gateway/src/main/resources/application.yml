@@ -12,7 +12,7 @@ spring:
           filters:
             - TokenRelay=
             - RemoveRequestHeader=Cookie
-            - RewritePath=/order/(?<path>.*),/$\{path}
+            - RewritePath=/order-service/(?<path>.*),/$\{path}
         - id: kitchen-service
           uri: http://127.0.0.1:8082
           predicates:
@@ -20,7 +20,7 @@ spring:
           filters:
             - TokenRelay=
             - RemoveRequestHeader=Cookie
-            - RewritePath=/kitchen/(?<path>.*),/$\{path}
+            - RewritePath=/kitchen-service/(?<path>.*),/$\{path}
         - id: delivery-service
           uri: http://127.0.0.1:8083
           predicates:
@@ -28,7 +28,7 @@ spring:
           filters:
             - TokenRelay=
             - RemoveRequestHeader=Cookie
-            - RewritePath=/delivery/(?<path>.*),/$\{path}
+            - RewritePath=/delivery-service/(?<path>.*),/$\{path}
 
   security:
     oauth2:
