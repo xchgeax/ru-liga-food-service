@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.liga.dto.CourierUpdateStatusDto;
@@ -34,7 +33,7 @@ public class CouriersController {
     @Operation(summary = "Get all couriers")
     @GetMapping
     public ResponseEntity<Page<Courier>> getCourierList(@PositiveOrZero @RequestParam Integer pageIndex,
-                                        @Positive @RequestParam Integer pageCount) {
+                                                        @Positive @RequestParam Integer pageCount) {
         return ResponseEntity.ok(courierService.getCourierList(pageIndex, pageCount));
     }
 
@@ -47,7 +46,7 @@ public class CouriersController {
     @Operation(summary = "Update courier status")
     @PostMapping("/id/{courierId}/status")
     public ResponseEntity<Object> updateCourierStatus(@PathVariable("courierId") Long courierId,
-                                                    @RequestBody CourierUpdateStatusDto updateDto) throws ResourceNotFoundException {
+                                                      @RequestBody CourierUpdateStatusDto updateDto) throws ResourceNotFoundException {
         return ResponseEntity.ok().body(courierService.updateCourierStatus(courierId, updateDto.getStatus()));
     }
 

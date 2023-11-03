@@ -1,8 +1,9 @@
-package ru.liga.service;
+package ru.liga.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+import ru.liga.service.RabbitMQNotificationService;
 
 @Service
 @RequiredArgsConstructor

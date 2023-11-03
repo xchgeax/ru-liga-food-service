@@ -1,18 +1,18 @@
 package ru.liga.controllers;
 
-import org.springframework.data.domain.Page;
-import ru.liga.dto.OrderDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.liga.dto.*;
+import ru.liga.dto.OrderConfirmationDto;
+import ru.liga.dto.OrderCreationDto;
+import ru.liga.dto.OrderDto;
+import ru.liga.dto.OrderStatusUpdateDto;
 import ru.liga.entity.OrderStatus;
 import ru.liga.exception.NoOrderItemsSuppliedException;
 import ru.liga.exception.ResourceNotFoundException;
-import ru.liga.service.OrderItemService;
 import ru.liga.service.OrderService;
 
 import javax.validation.constraints.Positive;
@@ -26,7 +26,6 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
-    private final OrderItemService orderItemService;
 
     @Operation(summary = "Get all orders")
     @GetMapping
@@ -56,22 +55,8 @@ public class OrderController {
     @Operation(summary = "Update order status")
     @PostMapping("/{id}/status")
     public void updateOrderStatus(@PathVariable("id") Long id,
-                                                    @RequestBody OrderStatusUpdateDto updateDto) throws ResourceNotFoundException {
+                                  @RequestBody OrderStatusUpdateDto updateDto) throws ResourceNotFoundException {
         orderService.updateOrderStatus(id, updateDto.getStatus());
-    }
-
-    @Operation(summary = "Create new order item")
-    @PostMapping("/{id}/items")
-    public ResponseEntity<OrderItemConfirmationDto> saveNewOrderItem(@PathVariable("id") Long id,
-                                                                     @RequestBody OrderItemDto orderItemDto) throws ResourceNotFoundException {
-        return ResponseEntity.ok(orderItemService.saveNewOrderItem(id, orderItemDto.getMenuItemId(),
-                orderItemDto.getQuantity()));
-    }
-
-    @Operation(summary = "Delete order item")
-    @PostMapping("/item/delete/{id}")
-    public void deleteOrderItem(@PathVariable("id") Long id) {
-        orderItemService.deleteOrderItem(id);
     }
 
 }
