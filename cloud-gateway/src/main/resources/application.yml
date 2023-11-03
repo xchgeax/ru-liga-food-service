@@ -8,7 +8,7 @@ spring:
         - id: order-service
           uri: http://127.0.0.1:8081
           predicates:
-            - Path=/order/**
+            - Path=/order-service/**
           filters:
             - TokenRelay=
             - RemoveRequestHeader=Cookie
@@ -16,7 +16,7 @@ spring:
         - id: kitchen-service
           uri: http://127.0.0.1:8082
           predicates:
-            - Path=/kitchen/**,/menu-item/**
+            - Path=/kitchen-service/**
           filters:
             - TokenRelay=
             - RemoveRequestHeader=Cookie
@@ -24,7 +24,7 @@ spring:
         - id: delivery-service
           uri: http://127.0.0.1:8083
           predicates:
-            - Path=/delivery/**
+            - Path=/delivery-service/**
           filters:
             - TokenRelay=
             - RemoveRequestHeader=Cookie
