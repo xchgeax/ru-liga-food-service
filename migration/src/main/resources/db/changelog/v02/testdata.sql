@@ -3,13 +3,13 @@ insert into restaurants (name, address, status) values ('restaurant1', 'restaura
 insert into restaurants (name, address, status) values ('restaurant2', 'restaurant2address', 'OPEN');
 insert into restaurants (name, address, status) values ('restaurant3', 'restaurant3address', 'OPEN');
 
-insert into customers(phone, email, address) values ('+79109876543', 'customer1@gmail.com','customer1address');
-insert into customers(phone, email, address) values ('+77479876543', 'customer2@gmail.com','customer2address');
-insert into customers(phone, email, address) values ('+79529876543', 'customer3@gmail.com','customer3address');
+insert into customers(phone, email, coordinates) values ('+79109876543', 'customer1@gmail.com','55.762960, 37.602162');
+insert into customers(phone, email, coordinates) values ('+77479876543', 'customer2@gmail.com','55.755759, 37.653571');
+insert into customers(phone, email, coordinates) values ('+79529876543', 'customer3@gmail.com','55.765223, 37.543281');
 
-insert into couriers(phone, status, coordinates) values ('+79236425387', 'AVAILABLE','55.643, 66.634');
-insert into couriers(phone, status, coordinates) values ('+79014504912', 'BUSY','77.523, 88.324');
-insert into couriers(phone, status, coordinates) values ('+79126678006', 'BUSY','99.234, 11.123');
+insert into couriers(phone, status, coordinates) values ('+79236425387', 'AVAILABLE','55.787740, 37.638793');
+insert into couriers(phone, status, coordinates) values ('+79014504912', 'BUSY','55.799912, 37.556369');
+insert into couriers(phone, status, coordinates) values ('+79126678006', 'BUSY','55.753688, 37.619787');
 
 insert into orders (customer_id, restaurant_id, status, courier_id, timestamp) values (1,1,'CUSTOMER_CREATED',1,'2023-04-11 15:05:00');
 insert into orders (customer_id, restaurant_id, status, courier_id, timestamp) values (3,2,'DELIVERY_PENDING',2,'2023-05-12 15:10:00');

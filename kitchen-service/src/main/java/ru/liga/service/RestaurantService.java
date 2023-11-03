@@ -1,48 +1,58 @@
 package ru.liga.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.liga.dto.SaveMenuItemConfirmationDto;
-import ru.liga.dto.UpdatePriceConfirmationDto;
+import ru.liga.dto.RestaurantCreationDto;
+import ru.liga.dto.RestaurantDto;
 import ru.liga.entity.Restaurant;
-import ru.liga.entity.RestaurantMenuItem;
-import ru.liga.repo.RestaurantMenuItemRepository;
+import ru.liga.entity.RestaurantStatus;
+import ru.liga.exception.ResourceNotFoundException;
+import ru.liga.mapper.RestaurantMapper;
 import ru.liga.repo.RestaurantRepository;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class RestaurantService {
 
-    private final RestaurantMenuItemRepository menuItemRepository;
     private final RestaurantRepository restaurantRepository;
+    private final RestaurantMapper restaurantMapper;
 
-    public UpdatePriceConfirmationDto updatePrice(Long id, int price) {
-        menuItemRepository.updatePrice(id, price);
-        return new UpdatePriceConfirmationDto().setPrice(price).setId(id);
+    public Page<Restaurant> getRestaurantList(Integer pageIndex, Integer pageCount) {
+        Pageable page = PageRequest.of(pageIndex, pageCount);
+
+        return restaurantRepository.findAll(page);
     }
 
-    public SaveMenuItemConfirmationDto saveMenuItem(String name, int price, String description, String image, Long restaurantId) {
-        Restaurant restaurant = restaurantRepository.findRestaurantById(restaurantId);
+    public RestaurantDto getRestaurantById(Long id) throws ResourceNotFoundException {
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Restaurant does not exist"));
 
-        if (restaurant == null) return new SaveMenuItemConfirmationDto().setId(-1L);
-
-        RestaurantMenuItem restaurantMenuItem = new RestaurantMenuItem();
-        restaurantMenuItem.setRestaurant(restaurant);
-        restaurantMenuItem.setName(name);
-        restaurantMenuItem.setPrice(price);
-        restaurantMenuItem.setDescription(description);
-        restaurantMenuItem.setImage(image);
-
-        restaurantMenuItem = menuItemRepository.save(restaurantMenuItem);
-
-        return new SaveMenuItemConfirmationDto().setId(restaurantMenuItem.getId());
+        return restaurantMapper.restaurantToRestaurantDto(restaurant);
     }
 
-    public void deleteMenuItem(Long id) {
-        RestaurantMenuItem menuItem = menuItemRepository.findRestaurantMenuItemById(id);
+    public RestaurantDto createRestaurant(RestaurantCreationDto restaurantCreationDto) {
+        Restaurant restaurant = restaurantMapper.restaurantCreationDtoToRestaurant(restaurantCreationDto);
 
-        if (menuItem == null) return;
+        restaurantRepository.save(restaurant);
+        return restaurantMapper.restaurantToRestaurantDto(restaurant);
+    }
 
-        menuItemRepository.delete(menuItem);
+    public List<RestaurantDto> findRestaurantsByStatus(RestaurantStatus status) {
+        List<Restaurant> restaurantList = restaurantRepository.findRestaurantsByStatus(status);
+
+        return restaurantMapper.restaurantsToRestaurantDtos(restaurantList);
+    }
+
+    public void updateRestaurantStatus(Long id, RestaurantStatus status) throws ResourceNotFoundException {
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Restaurant does not exist"));
+
+        restaurant.setStatus(status);
+        restaurantRepository.save(restaurant);
     }
 }

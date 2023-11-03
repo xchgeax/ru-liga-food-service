@@ -1,80 +1,87 @@
 package ru.liga.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.liga.dto.*;
+import ru.liga.dto.OrderConfirmationDto;
+import ru.liga.dto.OrderDto;
+import ru.liga.dto.OrderItemCreationDto;
 import ru.liga.entity.*;
-import ru.liga.repo.OrderItemRepository;
+import ru.liga.exception.NoOrderItemsSuppliedException;
+import ru.liga.exception.ResourceNotFoundException;
+import ru.liga.mapper.OrderMapper;
+import ru.liga.repo.CustomerRepository;
 import ru.liga.repo.OrderRepository;
-import ru.liga.repo.RestaurantMenuItemRepository;
+import ru.liga.repo.RestaurantRepository;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
 
-    OrderRepository orderRepository;
-    OrderItemRepository orderItemRepository;
-    RestaurantMenuItemRepository restaurantMenuItemRepository;
+    private final OrderItemService orderItemService;
+    private final RestaurantRepository restaurantRepository;
+    private final OrderRepository orderRepository;
+    private final CustomerRepository customerRepository;
 
-    @Autowired
-    public OrderService(OrderRepository orderRepository,
-                        OrderItemRepository orderItemRepository,
-                        RestaurantMenuItemRepository restaurantMenuItemRepository) {
-        this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
-        this.restaurantMenuItemRepository = restaurantMenuItemRepository;
-    }
+    private final OrderMapper orderMapper;
 
-    public OrderDto getOrderById(Long id) {
-        Order order = orderRepository.findOrderById(id);
-        RestaurantDto restaurantDto = new RestaurantDto()
-                .setName(order.getRestaurant().getName())
-                .setAddress(order.getRestaurant().getAddress());
-        return new OrderDto()
-                .setId(order.getId())
-                .setRestaurant(restaurantDto)
-                .setTimestamp(order.getTimestamp());
+
+    public OrderDto getOrderById(Long id) throws ResourceNotFoundException {
+        Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        return orderMapper.orderToOrderDto(order);
     }
 
     public List<OrderDto> getOrderListByStatus(OrderStatus status) {
-        return List.of(new OrderDto());
+        List<Order> orderList = orderRepository.findOrderByStatus(status);
+
+        return orderMapper.orderToOrderDto(orderList);
     }
 
-    public List<OrderDto> getOrderList() {
-        return List.of(new OrderDto());
+    public Page<OrderDto> getOrderList(Integer pageIndex, Integer pageCount) {
+        Pageable page = PageRequest.of(pageIndex, pageCount);
+        Page<Order> orders = orderRepository.findAll(page);
+
+        return orders.map(orderMapper::orderToOrderDto);
     }
 
-    public OrderConfirmationDto createOrder(Long restaurantId, List<OrderItemDto> menuItems) {
-        return new OrderConfirmationDto().setId(0L).setArrivalTime(123L).setPaymentUrl("google.com");
+    public OrderConfirmationDto createOrder(Long restaurantId, List<OrderItemCreationDto> orderItemDtoList) throws ResourceNotFoundException, NoOrderItemsSuppliedException {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new ResourceNotFoundException("Restaurant does not exist"));
+
+        // TODO: get real customer with security
+        Customer customer = customerRepository.findCustomerById(1L);
+
+        Order order = new Order();
+
+        List<OrderItem> orderedMenuItems = orderItemService.validateAndGetOrderedItems(order, restaurantId, orderItemDtoList);
+
+        order.setStatus(OrderStatus.CUSTOMER_CREATED);
+        order.setRestaurant(restaurant);
+        order.setTimestamp(Timestamp.valueOf(LocalDateTime.now()));
+        order.setCustomer(customer);
+
+        orderRepository.save(order);
+        orderItemService.saveOrderItemList(orderedMenuItems);
+
+        OrderConfirmationDto orderConfirmationDto = new OrderConfirmationDto();
+        orderConfirmationDto.setArrivalTime(1L);
+        orderConfirmationDto.setPaymentUrl("http://localhost/payment");
+        orderConfirmationDto.setId(order.getId());
+
+        return orderConfirmationDto;
     }
 
-    public OrderItemConfirmationDto saveNewOrderItem(Long orderId, Long menuItemId, int quantity) {
 
-        OrderItemConfirmationDto orderItemConfirmationDto = new OrderItemConfirmationDto();
-        RestaurantMenuItem restaurantMenuItem = restaurantMenuItemRepository.findRestaurantMenuItemById(menuItemId);
-        Order order = orderRepository.findOrderById(orderId);
+    public void updateOrderStatus(Long id, OrderStatus status) throws ResourceNotFoundException {
+        Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
-        if (restaurantMenuItem == null || order == null) return orderItemConfirmationDto.setId(-1L);
-
-        OrderItem orderItem = OrderItem.builder()
-                .order(order)
-                .restaurantMenuItem(restaurantMenuItem)
-                .quantity(quantity)
-                .price(restaurantMenuItem.getPrice() * quantity)
-                .build();
-        orderItemRepository.save(orderItem);
-
-        return orderItemConfirmationDto.setId(orderItem.getId());
-    }
-
-    public void deleteOrderItem(Long id) {
-        OrderItem orderItem = orderItemRepository.findOrderItemById(id);
-
-        if (orderItem == null) return;
-
-        orderItemRepository.delete(orderItem);
+        order.setStatus(status);
+        orderRepository.save(order);
     }
 }

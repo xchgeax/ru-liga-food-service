@@ -1,34 +1,43 @@
 package ru.liga.controllers;
 
+import org.springframework.data.domain.Page;
+import ru.liga.dto.OrderDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.liga.dto.*;
 import ru.liga.entity.OrderStatus;
+import ru.liga.exception.NoOrderItemsSuppliedException;
+import ru.liga.exception.ResourceNotFoundException;
+import ru.liga.service.OrderItemService;
 import ru.liga.service.OrderService;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Tag(name = "Orders management API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping
+@RequestMapping("/order")
 public class OrderController {
 
     private final OrderService orderService;
+    private final OrderItemService orderItemService;
 
-    // TODO: return page
     @Operation(summary = "Get all orders")
     @GetMapping
-    public ResponseEntity<List<OrderDto>> getOrderList() {
-       return ResponseEntity.ok(orderService.getOrderList());
+    public ResponseEntity<Page<OrderDto>> getOrderList(@PositiveOrZero @RequestParam Integer pageIndex,
+                                                       @Positive @RequestParam Integer pageCount) {
+        return ResponseEntity.ok(orderService.getOrderList(pageIndex, pageCount));
     }
 
     @Operation(summary = "Get order by ID")
-    @GetMapping("/id/{id}")
-    public ResponseEntity<OrderDto> getOrderById(@PathVariable("id") Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderDto> getOrderById(@PathVariable("id") Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
@@ -40,21 +49,29 @@ public class OrderController {
 
     @Operation(summary = "Create new order")
     @PostMapping
-    public ResponseEntity<OrderConfirmationDto> createOrder(@RequestBody OrderCreationDto order) {
+    public ResponseEntity<OrderConfirmationDto> createOrder(@RequestBody OrderCreationDto order) throws ResourceNotFoundException, NoOrderItemsSuppliedException {
         return ResponseEntity.ok(orderService.createOrder(order.getRestaurantId(), order.getMenuItems()));
+    }
+
+    @Operation(summary = "Update order status")
+    @PostMapping("/{id}/status")
+    public void updateOrderStatus(@PathVariable("id") Long id,
+                                                    @RequestBody OrderStatusUpdateDto updateDto) throws ResourceNotFoundException {
+        orderService.updateOrderStatus(id, updateDto.getStatus());
     }
 
     @Operation(summary = "Create new order item")
     @PostMapping("/{id}/items")
     public ResponseEntity<OrderItemConfirmationDto> saveNewOrderItem(@PathVariable("id") Long id,
-                                                                     @RequestBody OrderItemDto orderItemDto) {
-        return ResponseEntity.ok(orderService.saveNewOrderItem(id, orderItemDto.getMenuItemId(), orderItemDto.getQuantity()));
+                                                                     @RequestBody OrderItemDto orderItemDto) throws ResourceNotFoundException {
+        return ResponseEntity.ok(orderItemService.saveNewOrderItem(id, orderItemDto.getMenuItemId(),
+                orderItemDto.getQuantity()));
     }
 
     @Operation(summary = "Delete order item")
     @PostMapping("/item/delete/{id}")
     public void deleteOrderItem(@PathVariable("id") Long id) {
-        orderService.deleteOrderItem(id);
+        orderItemService.deleteOrderItem(id);
     }
 
 }

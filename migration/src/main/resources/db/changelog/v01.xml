@@ -8,8 +8,8 @@
         <sqlFile path="v01/create_table_couriers.sql" relativeToChangelogFile="true"/>
         <sqlFile path="v01/create_table_customers.sql" relativeToChangelogFile="true"/>
         <sqlFile path="v01/create_table_orders.sql" relativeToChangelogFile="true"/>
-        <sqlFile path="v01/create_table_order_items.sql" relativeToChangelogFile="true"/>
         <sqlFile path="v01/create_table_restaurant_menu_items.sql" relativeToChangelogFile="true"/>
+        <sqlFile path="v01/create_table_order_items.sql" relativeToChangelogFile="true"/>
         <rollback>
             <sqlFile path="v01/rollback/v01_rollback.sql" relativeToChangelogFile="true"/>
         </rollback>
