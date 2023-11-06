@@ -49,7 +49,7 @@ public class OrderController {
     @Operation(summary = "Create new order")
     @PostMapping
     public ResponseEntity<OrderConfirmationDto> createOrder(@RequestBody OrderCreationDto order) throws ResourceNotFoundException, NoOrderItemsSuppliedException {
-        return ResponseEntity.ok(orderService.createOrder(order.getRestaurantId(), order.getMenuItems()));
+        return ResponseEntity.ok(orderService.createOrder(order));
     }
 
     @Operation(summary = "Update order status")

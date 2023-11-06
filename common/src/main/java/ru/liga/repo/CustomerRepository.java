@@ -11,10 +11,6 @@ import java.util.List;
 public interface CustomerRepository extends CrudRepository<Customer, Long> {
 
     @Transactional
-    @Query("select c from Customer c where c.id = :id")
-    Customer findCustomerById(@Param("id") Long id);
-
-    @Transactional
     @Query("select c from Customer c where c.phone = :phone")
     List<Customer> findCustomerByPhone(@Param("phone") String phone);
 }

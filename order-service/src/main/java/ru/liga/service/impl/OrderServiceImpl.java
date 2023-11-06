@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.liga.dto.OrderConfirmationDto;
+import ru.liga.dto.OrderCreationDto;
 import ru.liga.dto.OrderDto;
 import ru.liga.dto.OrderItemCreationDto;
 import ru.liga.entity.*;
@@ -52,15 +53,17 @@ public class OrderServiceImpl implements OrderService {
         return orders.map(orderMapper::orderToOrderDto);
     }
 
-    public OrderConfirmationDto createOrder(Long restaurantId, List<OrderItemCreationDto> orderItemDtoList) throws ResourceNotFoundException, NoOrderItemsSuppliedException {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new ResourceNotFoundException("Restaurant does not exist"));
+    public OrderConfirmationDto createOrder(OrderCreationDto orderCreationDto) throws ResourceNotFoundException, NoOrderItemsSuppliedException {
+        Restaurant restaurant = restaurantRepository.findById(orderCreationDto.getRestaurantId())
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant does not exist"));
 
-        // TODO: get real customer with security
-        Customer customer = customerRepository.findCustomerById(1L);
+        Customer customer = customerRepository.findById(orderCreationDto.getClientId())
+                .orElseThrow(() -> new ResourceNotFoundException("Customer does not exist"));
 
         Order order = new Order();
 
-        List<OrderItem> orderedMenuItems = orderItemService.validateAndGetOrderedItems(order, restaurantId, orderItemDtoList);
+        List<OrderItem> orderedMenuItems = orderItemService.validateAndGetOrderedItems(order,
+                orderCreationDto.getRestaurantId(), orderCreationDto.getMenuItems());
 
         order.setStatus(OrderStatus.CUSTOMER_CREATED);
         order.setRestaurant(restaurant);

@@ -16,6 +16,10 @@ public class OrderCreationDto {
     @JsonProperty("restaurant_id")
     private Long restaurantId;
 
+    @Schema(description = "ID of the restaurant the order was made at")
+    @JsonProperty("client_id")
+    private Long clientId;
+
     @Schema(description = "Ordered items")
     @JsonProperty("menu_items")
     private List<OrderItemCreationDto> menuItems;
