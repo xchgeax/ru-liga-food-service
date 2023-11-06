@@ -1,6 +1,7 @@
 package ru.liga.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import ru.liga.entity.OrderStatus;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Schema(description = "Order DTO")
 @Data
+@Builder
 @Accessors(chain = true)
 public class OrderDto {
 
