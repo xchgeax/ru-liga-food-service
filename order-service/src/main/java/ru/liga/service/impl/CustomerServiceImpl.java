@@ -8,10 +8,11 @@ import org.springframework.stereotype.Service;
 import ru.liga.entity.Customer;
 import ru.liga.exception.ResourceNotFoundException;
 import ru.liga.repo.CustomerRepository;
+import ru.liga.service.CustomerService;
 
 @Service
 @RequiredArgsConstructor
-public class CustomerServiceImpl {
+public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
 
