@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.liga.entity.Customer;
 import ru.liga.exception.ResourceNotFoundException;
-import ru.liga.service.CustomerService;
+import ru.liga.service.impl.CustomerServiceImpl;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
@@ -19,7 +19,7 @@ import javax.validation.constraints.PositiveOrZero;
 @RequiredArgsConstructor
 public class CustomerController {
 
-    private final CustomerService customerService;
+    private final CustomerServiceImpl customerService;
 
     @Operation(summary = "Get all customers")
     @GetMapping
