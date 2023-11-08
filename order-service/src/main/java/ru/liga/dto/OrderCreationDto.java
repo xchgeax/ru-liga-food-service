@@ -2,13 +2,16 @@ package ru.liga.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.util.List;
 
 @Schema(description = "DTO for creation of a new order")
 @Data
+@AllArgsConstructor
 @Accessors(chain = true)
 public class OrderCreationDto {
 

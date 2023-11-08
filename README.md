@@ -1,5 +1,27 @@
 # Сервис по доставке еды.
 
+## Развёртывание
+
+* RabbitMQ - стандартные данные для авторизации guest@guest
+* PostgreSQL 11 - база данных liga с данными postgres@admin
+
+### Процесс развёртывания
+
+При запущенных на стандартных портах rabbitmq и базы данных необходимо выполнить скрипты миграции Liquibase, в интеграции IntelliJ с maven в модуле migration выполнить команду от плагина liquibase migration/plugins/liquibase/liquibase:update.
+
+После этого сервисы можно запускать в любом порядке.
+
+### Доступ к сервисам
+
+Стандартный пользователь с доступом ко всем сервисам - user@password
+
+- Notification Service - http://localhost:8084/
+- Delivery Service - http://localhost:8083/
+- Kitchen Service - http://localhost:8082/
+- Order Service - http://localhost:8081/
+
+Документация доступна по адресу /swagger-ui.html
+
 ## Модули приложения
 
 ### dependency_bom

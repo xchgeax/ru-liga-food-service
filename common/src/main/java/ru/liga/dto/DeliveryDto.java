@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import ru.liga.entity.OrderStatus;
 
+import java.util.UUID;
+
 @Schema(description = "DTO for delivery")
 @Data
 @Accessors(chain = true)
@@ -13,7 +15,7 @@ public class DeliveryDto {
 
     @Schema(description = "ID of the order being delivered")
     @JsonProperty("order_id")
-    private Long orderId;
+    private UUID orderId;
 
     @Schema(description = "Restaurant order was made at")
     private RestaurantDto restaurant;
@@ -24,7 +26,4 @@ public class DeliveryDto {
     @Schema(description = "Delivery status")
     private OrderStatus status;
 
-    // ???
-    @Schema(description = "Payment information")
-    private Long payment;
 }

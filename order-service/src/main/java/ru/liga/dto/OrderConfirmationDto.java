@@ -5,13 +5,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.UUID;
+
 @Schema(description = "DTO for response on order creation")
 @Data
 @Accessors(chain = true)
 public class OrderConfirmationDto {
 
     @Schema(description = "Order ID")
-    private Long id;
+    private UUID id;
 
     @Schema(description = "Secret payment URL")
     @JsonProperty("secret_payment_url")

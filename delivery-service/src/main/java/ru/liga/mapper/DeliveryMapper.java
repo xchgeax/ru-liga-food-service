@@ -14,8 +14,6 @@ public interface DeliveryMapper {
     @Mapping(source = "order.id", target = "orderId")
     DeliveryDto orderToDeliveryDto(Order order);
 
-    @Mapping(source = "order.id", target = "orderId")
-    DeliveryDto orderDtoToDeliveryDto(OrderDto order);
+    List<DeliveryDto> orderToDeliveryDto(List<Order> order);
 
-    List<DeliveryDto> orderDtoToDeliveryDto(List<OrderDto> order);
 }

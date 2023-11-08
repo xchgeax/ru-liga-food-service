@@ -12,12 +12,6 @@ management:
       show-details: ALWAYS
 
 spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:9000
-
   jpa:
     hibernate:
       ddl-auto: none
@@ -31,8 +25,8 @@ spring:
             revision_field_name: rev_id
             revision_type_field_name: rev_type
     show-sql: 'true'
-  datasource:
-    password: 'admin'
-    url: jdbc:postgresql://localhost:5432/postgres
 
+  datasource:
+    url: jdbc:postgresql://localhost:5432/liga
+    password: 'admin'
     username: 'postgres'

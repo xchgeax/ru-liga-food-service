@@ -8,6 +8,7 @@ import ru.liga.entity.OrderStatus;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Schema(description = "Order DTO")
 @Data
@@ -16,7 +17,7 @@ import java.util.List;
 public class OrderDto {
 
     @Schema(description = "Order ID")
-    private Long id;
+    private UUID id;
 
     @Schema(description = "Restaurant order was made at")
     private RestaurantDto restaurant;

@@ -15,6 +15,7 @@ import ru.liga.util.CoordinatesCalculator;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,12 +28,20 @@ public class QueueListener {
     private final RabbitMQNotificationServiceImpl rabbitMQNotificationService;
 
     @RabbitListener(queues = "delivery")
-    public void processDeliveryQueue(String message) throws JsonProcessingException, ResourceNotFoundException {
+    public void processDeliveryQueue(String message) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        Long orderId = objectMapper.readValue(message, Long.class);
+        UUID orderId = objectMapper.readValue(message, UUID.class);
+
         log.info("Received new delivery to process id={}", orderId);
-        Order order = orderRepository.findById(orderId).orElseThrow(ResourceNotFoundException::new);
+
+        Order order;
+        try {
+            order = orderRepository.findById(orderId).orElseThrow(ResourceNotFoundException::new);
+        } catch (ResourceNotFoundException e) {
+            log.warn("Order id={} doesn't exists", orderId);
+            return;
+        }
 
         List<Courier> courierList = courierRepository.findCourierByStatus(CourierStatus.AVAILABLE);
 
@@ -48,14 +57,11 @@ public class QueueListener {
             closestCourier.setStatus(CourierStatus.BUSY);
             order.setCourier(closestCourier);
             order.setStatus(OrderStatus.DELIVERY_PICKING);
-            log.info("Order id={} is not awaiting courier", orderId);
-
-            rabbitMQNotificationService.sendCourierNotificationOnOrder(orderId);
         } else {
-            log.info("No available courier for order id={}, pending", orderId);
             order.setStatus(OrderStatus.DELIVERY_PENDING);
         }
 
         orderRepository.save(order);
+        rabbitMQNotificationService.sendNotificationOnOrder(orderId);
     }
 }

@@ -24,8 +24,4 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
-    @ExceptionHandler(value = OrderAlreadyDeliveredException.class)
-    protected ResponseEntity<Object> handleOrderAlreadyDeliveredException(OrderAlreadyDeliveredException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-    }
 }

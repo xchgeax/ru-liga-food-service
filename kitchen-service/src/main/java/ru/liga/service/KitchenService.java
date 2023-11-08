@@ -1,12 +1,15 @@
 package ru.liga.service;
 
+import ru.liga.exception.IncorrectOrderStateException;
 import ru.liga.exception.ResourceNotFoundException;
+
+import java.util.UUID;
 
 public interface KitchenService {
 
-    void acceptOrder(Long orderId);
+    void acceptOrder(UUID orderId);
 
-    void denyOrder(Long orderId);
+    void denyOrder(UUID orderId);
 
-    void finishOrder(Long orderId) throws ResourceNotFoundException;
+    void readyOrder(UUID orderId) throws ResourceNotFoundException, IncorrectOrderStateException;
 }

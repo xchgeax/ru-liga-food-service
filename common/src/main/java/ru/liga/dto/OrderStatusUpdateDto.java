@@ -7,12 +7,17 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import ru.liga.entity.OrderStatus;
 
+import java.util.UUID;
+
 @Schema(description = "DTO for updating order status")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
 public class OrderStatusUpdateDto {
+
+    @Schema(description = "Order ID")
+    private UUID orderId;
 
     @Schema(description = "New order status")
     private OrderStatus status;

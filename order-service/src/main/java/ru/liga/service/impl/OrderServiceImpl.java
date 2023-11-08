@@ -10,40 +10,37 @@ import ru.liga.dto.OrderCreationDto;
 import ru.liga.dto.OrderDto;
 import ru.liga.dto.OrderItemCreationDto;
 import ru.liga.entity.*;
+import ru.liga.exception.IncorrectOrderStateException;
 import ru.liga.exception.NoOrderItemsSuppliedException;
 import ru.liga.exception.ResourceNotFoundException;
 import ru.liga.mapper.OrderMapper;
-import ru.liga.repo.CustomerRepository;
-import ru.liga.repo.OrderRepository;
-import ru.liga.repo.RestaurantRepository;
+import ru.liga.repo.*;
 import ru.liga.service.OrderService;
+import ru.liga.service.RabbitMQNotificationService;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    private final OrderItemServiceImpl orderItemService;
     private final RestaurantRepository restaurantRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final RestaurantMenuItemRepository menuItemRepository;
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
+    private final RabbitMQNotificationService rabbitMQNotificationService;
 
     private final OrderMapper orderMapper;
 
 
-    public OrderDto getOrderById(Long id) throws ResourceNotFoundException {
+    public OrderDto getOrderById(UUID id) throws ResourceNotFoundException {
         Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
         return orderMapper.orderToOrderDto(order);
-    }
-
-    public List<OrderDto> getOrderListByStatus(OrderStatus status) {
-        List<Order> orderList = orderRepository.findOrderByStatus(status);
-
-        return orderMapper.orderToOrderDto(orderList);
     }
 
     public Page<OrderDto> getOrderList(Integer pageIndex, Integer pageCount) {
@@ -62,8 +59,8 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = new Order();
 
-        List<OrderItem> orderedMenuItems = orderItemService.validateAndGetOrderedItems(order,
-                orderCreationDto.getRestaurantId(), orderCreationDto.getMenuItems());
+        List<OrderItem> orderedMenuItems = validateAndGetOrderedItems(order, orderCreationDto.getRestaurantId(),
+                orderCreationDto.getMenuItems());
 
         order.setStatus(OrderStatus.CUSTOMER_CREATED);
         order.setRestaurant(restaurant);
@@ -71,7 +68,9 @@ public class OrderServiceImpl implements OrderService {
         order.setCustomer(customer);
 
         orderRepository.save(order);
-        orderItemService.saveOrderItemList(orderedMenuItems);
+        orderItemRepository.saveAll(orderedMenuItems);
+
+        rabbitMQNotificationService.sendNotificationOnOrder(order.getId());
 
         OrderConfirmationDto orderConfirmationDto = new OrderConfirmationDto();
         orderConfirmationDto.setArrivalTime(1L);
@@ -81,11 +80,48 @@ public class OrderServiceImpl implements OrderService {
         return orderConfirmationDto;
     }
 
+    @Override
+    public void cancelOrder(UUID id) throws ResourceNotFoundException, IncorrectOrderStateException {
+        updateOrderStatus(id, OrderStatus.CUSTOMER_CANCELLED);
+    }
 
-    public void updateOrderStatus(Long id, OrderStatus status) throws ResourceNotFoundException {
-        Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+    public List<OrderItem> validateAndGetOrderedItems(Order order, Long restaurantId, List<OrderItemCreationDto> orderItemDtoList) throws NoOrderItemsSuppliedException {
 
-        order.setStatus(status);
+        Map<Long, Integer> orderedMenuItemQuantity = orderItemDtoList.stream()
+                .collect(Collectors.toMap(OrderItemCreationDto::getMenuItemId, OrderItemCreationDto::getQuantity));
+
+        Set<Long> orderedMenuItemIds = orderedMenuItemQuantity.keySet();
+        List<RestaurantMenuItem> menuItems = menuItemRepository.findAllByRestaurantIdAndIdIn(restaurantId, orderedMenuItemIds);
+
+        if (menuItems.isEmpty()) throw new NoOrderItemsSuppliedException();
+
+        List<OrderItem> orderedItems = new ArrayList<>();
+
+        menuItems.forEach(menuItem -> {
+            Integer quantity = orderedMenuItemQuantity.get(menuItem.getId());
+
+            OrderItem orderItem = new OrderItem();
+            orderItem.setOrder(order);
+            orderItem.setRestaurantMenuItem(menuItem);
+            orderItem.setQuantity(quantity);
+            orderItem.setPrice(menuItem.getPrice() * quantity);
+
+            orderedItems.add(orderItem);
+        });
+
+        return orderedItems;
+    }
+
+    public void updateOrderStatus(UUID orderId, OrderStatus orderStatus) throws ResourceNotFoundException, IncorrectOrderStateException {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        if (!orderStatus.isAcceptableForOrder(order)) {
+            throw new IncorrectOrderStateException();
+        }
+
+        order.setStatus(orderStatus);
+
         orderRepository.save(order);
+        rabbitMQNotificationService.sendNotificationOnOrder(orderId);
     }
 }

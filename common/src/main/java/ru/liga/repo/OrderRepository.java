@@ -9,13 +9,9 @@ import ru.liga.entity.OrderStatus;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 
-public interface OrderRepository extends JpaRepository<Order, Long> {
-
-    @Modifying
-    @Transactional
-    @Query("update Order ord set ord.status = :status where ord.id = :id")
-    void updateOrderStatus(@Param("id") Long id, @Param("status") OrderStatus status);
+public interface OrderRepository extends JpaRepository<Order, UUID> {
 
     @Transactional
     @Query("select ord from Order ord where ord.status = :status")
